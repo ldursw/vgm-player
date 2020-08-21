@@ -12,6 +12,7 @@ the Teensy 3.6 board.
 - Correct volume for PSG and FM
 - Integration with emulators available
 - Supports emulated and discrete SN76489
+- Uses the Mega Amp circuit for amplification
 
 ## Demo
 - [Instruction streaming from PC](https://www.youtube.com/watch?v=saAEF2lk2_Y)
@@ -74,3 +75,4 @@ Thank you very much for all these awesome people
 - Dave, Maxim, Valley Bell - VGM Format
 - zamaz - [DGen/SDL emulator](https://sourceforge.net/projects/dgen/files/dgen/1.33/)
 - Softdev, Eke-Eke - [Genesis Plus GX emulator](https://github.com/ekeeke/Genesis-Plus-GX)
+- Ace, Villahed94 - [Mega Amp](https://www.sega-16.com/forum/showthread.php?26568-Introducing-the-Mega-Amp-The-universal-Genesis-audio-circuit)
