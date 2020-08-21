@@ -1,0 +1,240 @@
+diff --git a/libretro/libretro.c b/libretro/libretro.c
+index ae4bc6dd4ac6fa75ecc3d3c9db1eeefefc178bb6..20902bc0c7a30f553b13875a08df0a991560ff85 100644
+--- a/libretro/libretro.c
++++ b/libretro/libretro.c
+@@ -2875,6 +2875,7 @@ void retro_init(void)
+ void retro_deinit(void)
+ {
+    libretro_supports_bitmasks = false;
++   serial_deinit();
+ }
+ 
+ void retro_reset(void)
+diff --git a/core/shared.h b/core/shared.h
+index 700f27bff098e0ef7c55a7eac37ff9ecb8a516b9..0ababa845720df0ea523447ba984ff1954b43967 100644
+--- a/core/shared.h
++++ b/core/shared.h
+@@ -36,6 +36,7 @@
+ #include "areplay.h"
+ #include "svp.h"
+ #include "state.h"
++#include "serial.h"
+ 
+ #endif /* _SHARED_H_ */
+ 
+diff --git a/core/sound/psg.c b/core/sound/psg.c
+index 22b108f93ef5ff4c81f25843bf88bc4b1aada17c..ed9c6788346f02a939cc2691a4adf00dd705d5c6 100644
+--- a/core/sound/psg.c
++++ b/core/sound/psg.c
+@@ -228,6 +228,8 @@ void psg_write(unsigned int clocks, unsigned int data)
+ {
+   int index;
+ 
++  serial_writePSG(clocks, data);
++
+   /* PSG chip synchronization */
+   if (clocks > psg.clocks)
+   {
+diff --git a/core/sound/serial.c b/core/sound/serial.c
+new file mode 100644
+index 0000000..8cb3e4d
+--- /dev/null
++++ b/core/sound/serial.c
+@@ -0,0 +1,129 @@
++#include "shared.h"
++#include <windows.h>
++
++static void writeToSerialPort(uint8_t *data, unsigned int length);
++
++static HANDLE pipe;
++
++static uint16_t lastFMAddress;
++static uint8_t lastFMValue;
++
++static uint32_t dacWait;
++static unsigned int dacSamples;
++
++static const struct {
++    unsigned int samples;
++    unsigned int usecs;
++} per_frame[2] = {
++    { (44100 / 60), (1000000 / 60) },
++    { (44100 / 50), (1000000 / 50) },
++};
++
++void serial_init() {
++    lastFMAddress = 0;
++    lastFMValue = 0;
++    dacWait = 0;
++    dacSamples = 0;
++
++    if (pipe) {
++        CloseHandle(pipe);
++        pipe = NULL;
++    }
++
++    pipe = CreateFile(
++        TEXT("\\\\.\\pipe\\vgmstream"),
++        GENERIC_READ | GENERIC_WRITE,
++        0,
++        NULL,
++        OPEN_EXISTING,
++        FILE_ATTRIBUTE_NORMAL,
++        NULL
++    );
++    if (pipe == INVALID_HANDLE_VALUE)
++    {
++        pipe = NULL;
++        return;
++    }
++}
++
++void serial_deinit() {
++    if (!pipe) {
++        return;
++    }
++
++    CloseHandle(pipe);
++    pipe = NULL;
++}
++
++void serial_writeFM(unsigned int cycles, unsigned int address, unsigned int value) {
++    if (address == 0 || address == 2) {
++        lastFMAddress = value;
++
++        if (address == 2) {
++            lastFMAddress |= 0x100;
++        }
++
++        return;
++    }
++
++    uint8_t a = (uint8_t)address;
++    uint8_t v = (uint8_t)value;
++
++    // code ported from DGen emulator
++    if (lastFMAddress != 0x2a) {
++        uint8_t buf[] = { 0x02 + (a >> 1), lastFMAddress & 0xff, v };
++        writeToSerialPort(buf, 3);
++
++        return;
++    }
++
++    // calculate the number of microseconds spent in current frame
++    unsigned int usecs = (cycles * 1000) / (system_clock / 1000);
++    unsigned int samples;
++    unsigned int diff;
++
++    if (usecs > per_frame[vdp_pal].usecs) {
++        usecs = per_frame[vdp_pal].usecs;
++    }
++
++    samples = ((usecs * ((per_frame[vdp_pal].samples << 20) /
++        per_frame[vdp_pal].usecs)) >> 20);
++    diff = (samples - dacSamples);
++    if (diff > 0 && diff <= 255) {
++        uint8_t dataToSend[3] = { 0x04, v, (uint8_t)diff };
++        writeToSerialPort(dataToSend, 3);
++
++        dacWait += diff;
++    }
++
++    dacSamples = samples;
++}
++
++void serial_writePSG(unsigned int cycles, unsigned int value) {
++    uint8_t dataToSend[3] = { 0x01, value & 0xff, 0x00 };
++    writeToSerialPort(dataToSend, 3);
++}
++
++void serial_endFrame() {
++    // code ported from DGen emulator
++    unsigned int max = per_frame[vdp_pal].samples;
++
++    if (dacWait < max) {
++        uint16_t tmp = max - dacWait;
++
++        uint8_t dataToSend[3] = { 0x05, (tmp >> 8), tmp & 0xff };
++        writeToSerialPort(dataToSend, 3);
++    }
++
++    dacWait = 0;
++    dacSamples = 0;
++}
++
++static void writeToSerialPort(uint8_t *data, unsigned int length) {
++    if (!pipe) {
++        return;
++    }
++
++    DWORD dwBytesWritten = 0;
++    WriteFile(pipe, data, length, &dwBytesWritten, NULL);
++}
+diff --git a/core/sound/serial.h b/core/sound/serial.h
+new file mode 100644
+index 0000000..dad91a8
+--- /dev/null
++++ b/core/sound/serial.h
+@@ -0,0 +1,10 @@
++#ifndef SERIAL_H
++#define SERIAL_H
++
++void serial_init(void);
++void serial_deinit(void);
++void serial_writeFM(unsigned int cycles, unsigned int address, unsigned int value);
++void serial_writePSG(unsigned int cycles, unsigned int value);
++void serial_endFrame(void);
++
++#endif
+diff --git a/core/sound/sound.c b/core/sound/sound.c
+index 6bb0380fb6c50f831872e91d03446dbaa2f0f240..d804e70163551d92c21eb7662b3b428c6fbcb0df 100644
+--- a/core/sound/sound.c
++++ b/core/sound/sound.c
+@@ -128,6 +128,8 @@ static void YM2612_Write(unsigned int cycles, unsigned int a, unsigned int v)
+ 
+   /* write FM register */
+   YM2612Write(a, v);
++  
++  serial_writeFM(cycles, a, v);
+ }
+ 
+ static unsigned int YM2612_Read(unsigned int cycles, unsigned int a)
+diff --git a/core/system.c b/core/system.c
+index ec79abd2196f4363ce38f355caf55630f71e1739..4881b3153fafacf9872b2e69275f9cc5e47f9ba5 100644
+--- a/core/system.c
++++ b/core/system.c
+@@ -331,6 +331,7 @@ void system_init(void)
+   vdp_init();
+   render_init();
+   sound_init();
++  serial_init();
+ }
+ 
+ void system_reset(void)
+@@ -675,6 +676,8 @@ void system_frame_gen(int do_skip)
+     bitmap.viewport.changed |= 1;
+   }
+ 
++  serial_endFrame();
++
+   /* adjust timings for next frame */
+   input_end_frame(mcycles_vdp);
+   m68k.cycles -= mcycles_vdp;
+@@ -997,6 +1000,8 @@ void system_frame_scd(int do_skip)
+     bitmap.viewport.ow = bitmap.viewport.w;
+     bitmap.viewport.changed |= 1;
+   }
++
++  serial_endFrame();
+   
+   /* adjust timings for next frame */
+   scd_end_frame(scd.cycles);
+@@ -1404,6 +1409,8 @@ void system_frame_sms(int do_skip)
+     bitmap.viewport.changed |= 1;
+   }
+ 
++  serial_endFrame();
++
+   /* adjust timings for next frame */
+   input_end_frame(mcycles_vdp);
+   Z80.cycles -= mcycles_vdp;
