@@ -76,3 +76,4 @@ Thank you very much for all these awesome people
 - zamaz - [DGen/SDL emulator](https://sourceforge.net/projects/dgen/files/dgen/1.33/)
 - Softdev, Eke-Eke - [Genesis Plus GX emulator](https://github.com/ekeeke/Genesis-Plus-GX)
 - Ace, Villahed94 - [Mega Amp](https://www.sega-16.com/forum/showthread.php?26568-Introducing-the-Mega-Amp-The-universal-Genesis-audio-circuit)
+- Stephane-D - [XGM Tool and XGM Player](https://github.com/Stephane-D/SGDK/tree/master/sample/xgmplayer)
