@@ -47,7 +47,7 @@ namespace VgmReader
                 {
                     WriteFm((byte)(command - 0x02), data1, data2);
                 }
-                else if (command == 0x04 && data2 > 0)
+                else if (command == 0x04 && (data1 | data2) != 0)
                 {
                     WaitSamples((ushort)(((data1 << 8) & 0xff00) | (data2 & 0xff)));
                 }
