@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -131,6 +132,12 @@ namespace VgmReader
 
         private static Stream OpenSerial(string name)
         {
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                OpenSerialWindows(name) : OpenSerialLinux(name);
+        }
+
+        private static Stream OpenSerialWindows(string name)
+        {
             return new FileStream(
                 new SafeFileHandle(
                     CreateFile(
@@ -145,7 +152,23 @@ namespace VgmReader
                     true
                 ),
                 FileAccess.Write,
-                3 * 16,
+                3 * 16, // buffer 16 3-byte commands
+                false
+            );
+        }
+
+        private static Stream OpenSerialLinux(string name)
+        {
+            // set Teensy mode as raw to prevent the OS
+            // from sending control data
+            Process.Start("stty", $"-F /dev/{name} raw").WaitForExit();
+
+            return new FileStream(
+                "/dev/" + name,
+                FileMode.Open,
+                FileAccess.Write,
+                FileShare.ReadWrite,
+                3 * 16, // buffer 16 3-byte commands
                 false
             );
         }
