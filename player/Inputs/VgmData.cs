@@ -99,7 +99,7 @@ namespace VgmReader
                     _ when value >= 0x80 && value <= 0x8f =>
                         FmWriteWait((byte)(value - 0x80)),
                     0x67 => SetDataBank(),
-                    // 0x68 => PcmRamWrite(),
+                    0x68 => PcmRamWrite(),
                     0xb2 => PwmWrite(_reader.ReadByte(), _reader.ReadByte()),
                     0xe0 => SeekDataBank(_reader.ReadUInt32()),
                     _ => null
