@@ -112,13 +112,6 @@ bool Dispatcher::processItem(uint32_t item)
             Sn76489::setup();
             Ym2612::setup();
             break;
-        case 6:
-        case 7: // fm write
-        {
-            WriteFmCommand::process(command - 6, data1, data2);
-
-            return true;
-        }
         default:
         {
             while (true)
