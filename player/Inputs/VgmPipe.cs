@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Threading;
-using VgmReader.Optimizers;
 
 namespace VgmReader.Inputs
 {
@@ -11,11 +10,9 @@ namespace VgmReader.Inputs
 
         private readonly Thread _readThread;
         private readonly CircularBuffer<Instruction> _queue;
-        private readonly FmOptimizer _optimizer;
 
         public VgmPipe()
         {
-            _optimizer = new FmOptimizer();
             _queue = new CircularBuffer<Instruction>(735 * 3);
             _readThread = new Thread(ReadPipe) { IsBackground = true };
             _readThread.Start();
@@ -82,12 +79,6 @@ namespace VgmReader.Inputs
                     if (server.Read(buffer, 0, 3) != 3)
                     {
                         break;
-                    }
-
-                    if ((buffer[0] == 0x02 || buffer[0] == 0x03) &&
-                        !_optimizer.Write((byte)(buffer[0] - 0x02), buffer[1], buffer[2]))
-                    {
-                        continue;
                     }
 
                     _queue.Add(new Instruction(buffer[0], buffer[1], buffer[2]));

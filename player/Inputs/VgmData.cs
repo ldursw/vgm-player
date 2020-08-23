@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using VgmReader.Inputs;
-using VgmReader.Optimizers;
 
 namespace VgmReader
 {
@@ -14,9 +13,6 @@ namespace VgmReader
         private long _dataBankOffset;
         private uint _dataBankSize;
         private uint _dataBankIndex;
-
-        // optimizations
-        private readonly FmOptimizer _fmOptimizer = new FmOptimizer();
 
         public VgmData(VgmHeader header, BinaryReader reader)
         {
@@ -132,14 +128,6 @@ namespace VgmReader
 
         private uint FmWrite(byte port, byte address, byte value)
         {
-            /*if (_fmOptimizer.Write(port, address, value))
-            {
-                return VgmInstructions.FmWrite(port, address, value);
-            }
-            else
-            {
-                return 0;
-            }*/
             return VgmInstructions.FmWrite(port, address, value);
         }
 
@@ -161,14 +149,6 @@ namespace VgmReader
             var sample = _reader.ReadByte();
             _reader.BaseStream.Position = oldPos;
 
-            /*if (_fmOptimizer.Write(0, 0x2a, sample))
-            {
-                return VgmInstructions.FmWriteSample(sample, wait);
-            }
-            else
-            {
-                return WaitSample(wait);
-            }*/
             return VgmInstructions.FmWriteSample(sample, wait);
         }
 
