@@ -129,7 +129,7 @@ namespace VgmReader
             _serial?.Write(stackalloc byte[3] { command, arg1, arg2 });
         }
 
-        private static FileStream OpenSerial(string name)
+        private static Stream OpenSerial(string name)
         {
             return new FileStream(
                 new SafeFileHandle(
