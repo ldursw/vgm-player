@@ -1,0 +1,233 @@
+diff --git a/main.cpp b/main.cpp
+index 4a69377..614a34b 100644
+--- a/main.cpp
++++ b/main.cpp
+@@ -558,7 +558,7 @@ next_rom:
+ 		}
+ 
+ 		// Measure how many frames to do this round.
+-		usec += ((newclk - oldclk) & 0x3fffff); // no more than 4 secs
++		usec += ((newclk - oldclk) & 0xffff); // no more than 4 secs
+ 		frames_todo = (usec / usec_frame);
+ 		usec %= usec_frame;
+ 		oldclk = newclk;
+@@ -575,7 +575,6 @@ next_rom:
+ #ifdef __BEOS__
+ 				snooze(tmp / 1000);
+ #else
+-				usleep(tmp);
+ #endif
+ 			}
+ 		}
+@@ -621,7 +620,6 @@ next_rom:
+ #ifdef __BEOS__
+ 			snooze(dgen_nice);
+ #else
+-			usleep(dgen_nice);
+ #endif
+ 		}
+ 	}
+diff --git a/md.cpp b/md.cpp
+index ed3b668..5745ab7 100644
+--- a/md.cpp
++++ b/md.cpp
+@@ -754,6 +754,8 @@ md::md(bool pal, char region):
+ 
+   ok=1;
+ 
++  vgm_dump_start((const char *)"dump.vgm");
++
+ 	return;
+ cleanup:
+ 	if (ok_ym2612)
+diff --git a/md.h b/md.h
+index 381099c..b52995f 100644
+--- a/md.h
++++ b/md.h
+@@ -45,6 +45,10 @@ extern "C"
+ #include "dz80/dissz80.h"
+ #endif
+ 
++#if WIN32
++#include <windows.h>
++#endif
++
+ //#define BUILD_YM2612
+ extern "C" {
+ #include "fm.h"
+@@ -528,6 +532,13 @@ public:
+ 	void vgm_dump_frame();
+ #endif
+ 
++#if WIN32
++  HANDLE vgmSerial = NULL;
++#else
++  int vgmSerial = 0;
++#endif
++  void writeToSerialPort(uint8_t *data, uint8_t length);
++
+   // public struct, full with data from the cartridge header
+   struct _carthead_ {
+     char system_name[0x10];           // "SEGA GENESIS    ", "SEGA MEGA DRIVE  "
+diff --git a/myfm.cpp b/myfm.cpp
+index 6660dbd..6c1873b 100644
+--- a/myfm.cpp
++++ b/myfm.cpp
+@@ -7,6 +7,14 @@
+ #include "md.h"
+ #include "rc-vars.h"
+ 
++#ifndef WIN32
++#include <fcntl.h>
++#include <sys/stat.h>
++#include <unistd.h>
++#include <sys/socket.h>
++#include <sys/un.h>
++#endif
++
+ // REMEMBER NOT TO USE ANY STATIC variables, because they
+ // will exist thoughout ALL megadrives!
+ int md::myfm_write(int a, int v, int md)
+@@ -201,9 +209,18 @@ void md::vgm_dump_ym2612(uint8_t a1, uint8_t reg, uint8_t data)
+ 			diff = (samples - vgm_dump_dac_samples);
+ 			if ((diff > 0) && (diff <= 16)) {
+ 				fputc((0x70 + (diff - 1)), vgm_dump_file);
++			}
++
++			if ((diff > 0) && (diff <= 255)) {
++				uint8_t dataToSend[3] = {0x04, data, (uint8_t)diff};
++				writeToSerialPort(dataToSend, 3);
++
+ 				vgm_dump_dac_wait += diff;
+ 			}
+ 			vgm_dump_dac_samples = samples;
++		} else {
++			uint8_t vbuf[] = {(uint8_t)(0x02 + a1), reg, data};
++			writeToSerialPort(vbuf, 3);
+ 		}
+ 	}
+ }
+@@ -214,6 +231,9 @@ void md::vgm_dump_sn76496(uint8_t data)
+ 		uint8_t buf[] = { 0x50, data };
+ 
+ 		fwrite(buf, sizeof(buf), 1, vgm_dump_file);
++
++		uint8_t dataToSend[3] = {0x01, data, 0x00};
++		writeToSerialPort(dataToSend, 3);
+ 	}
+ }
+ 
+@@ -229,6 +249,9 @@ void md::vgm_dump_frame()
+ 
+ 		memcpy(&buf[1], &tmp, sizeof(tmp));
+ 		fwrite(buf, sizeof(buf), 1, vgm_dump_file);
++
++		uint8_t dataToSend[3] = {0x05, buf[2], buf[1]};
++		writeToSerialPort(dataToSend, 3);
+ 	}
+ 	vgm_dump_samples_total += max;
+ 	vgm_dump_dac_wait = 0;
+@@ -248,6 +271,12 @@ int md::vgm_dump_start(const char *name)
+ 	unsigned int i;
+ 	int err;
+ 
++#ifndef WIN32
++	sockaddr_un address;
++	address.sun_family = AF_UNIX;
++	strcpy(address.sun_path, "/tmp/vgmstream.sock");
++#endif
++
+ 	if (vgm_dump == true)
+ 		vgm_dump_stop();
+ 	vgm_dump_file = dgen_fopen("vgm", name, DGEN_WRITE);
+@@ -323,6 +352,44 @@ int md::vgm_dump_start(const char *name)
+ 		if (fwrite(buf, sizeof(buf), 1, vgm_dump_file) != 1)
+ 			goto error;
+ 	}
++
++#if WIN32
++	if (vgmSerial) {
++		CloseHandle(vgmSerial);
++		vgmSerial = NULL;
++	}
++
++	vgmSerial = CreateFile(
++		TEXT("\\\\.\\pipe\\vgmstream"),
++		GENERIC_READ | GENERIC_WRITE,
++		0,
++		NULL,
++		OPEN_EXISTING,
++		FILE_ATTRIBUTE_NORMAL,
++		NULL
++	);
++	if (vgmSerial == INVALID_HANDLE_VALUE) {
++		goto error;
++	}
++#else
++	if (vgmSerial) {
++		close(vgmSerial);
++		vgmSerial = 0;
++	}
++
++	vgmSerial = socket(AF_UNIX, SOCK_STREAM, 0);
++	if (vgmSerial == -1) {
++		printf("Failed to open pipe: %s\n", strerror(errno));
++		goto error;
++	}
++
++	if (connect(vgmSerial, (sockaddr*)&address, sizeof(address)) == -1) {
++		printf("Failed to open pipe: %s\n", strerror(errno));
++		close(vgmSerial);
++		goto error;
++	}
++#endif
++
+ 	vgm_dump_samples_total = 0;
+ 	vgm_dump_dac_wait = 0;
+ 	vgm_dump_dac_samples = 0;
+@@ -360,6 +427,31 @@ void md::vgm_dump_stop()
+ 	vgm_dump_dac_wait = 0;
+ 	vgm_dump_dac_samples = 0;
+ 	vgm_dump = false;
++
++#if WIN32
++	if (vgmSerial) {
++		CloseHandle(vgmSerial);
++		vgmSerial = NULL;
++	}
++#else
++	if (vgmSerial) {
++		close(vgmSerial);
++		vgmSerial = 0;
++	}
++#endif
++}
++
++void md::writeToSerialPort(uint8_t *data, uint8_t length) {
++   if (!vgmSerial) {
++	  return;
++   }
++
++#if WIN32
++   DWORD dwBytesWritten = 0;
++   WriteFile(vgmSerial, data, length, &dwBytesWritten, NULL);
++#else
++   write(vgmSerial, data, length);
++#endif
+ }
+ 
+ #endif // WITH_VGMDUMP
+diff --git a/rc-vars.h b/rc-vars.h
+index 974282e..b74c02a 100644
+--- a/rc-vars.h
++++ b/rc-vars.h
+@@ -112,7 +112,7 @@ RCCTL(dgen_load, PDK_F3, 0, 0);
+ RCVAR(dgen_autoload, 0);
+ RCVAR(dgen_autosave, 0);
+ RCVAR(dgen_autoconf, 1);
+-RCVAR(dgen_frameskip, 1);
++RCVAR(dgen_frameskip, 0);
+ RCVAR(dgen_show_carthead, 0);
+ RCSTR(dgen_rom_path, "roms"); /* synchronize with romload.c */
+ 
+
