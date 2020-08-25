@@ -50,7 +50,7 @@ namespace VgmReader
                 }
                 else if (command == 0x04 && (data1 | data2) != 0)
                 {
-                    WaitSamples((ushort)(((data1 << 8) & 0xff00) | (data2 & 0xff)));
+                    WaitSamples(data2, data1);
                 }
                 else if (command == 0x05)
                 {
@@ -95,13 +95,9 @@ namespace VgmReader
             WriteCommand(0x02, data, 0x00);
         }
 
-        private static void WaitSamples(ushort samples)
+        private static void WaitSamples(byte high, byte low)
         {
-            WriteCommand(
-                0x03,
-                (byte)(samples >> 8),
-                (byte)(samples & 0xff)
-            );
+            WriteCommand(0x03, low, high);
         }
 
         private static void ResetChip()
