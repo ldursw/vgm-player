@@ -13,7 +13,7 @@ namespace VgmReader.Outputs
 {
     class VgmSerial
     {
-        private static Stream _serial;
+        private static Stream? _serial;
 
         public static void Play(string name, IVgmInput vgm)
         {
