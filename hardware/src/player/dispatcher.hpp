@@ -10,7 +10,6 @@
 class Dispatcher {
 public:
     static void enqueue(uint8_t command, uint8_t data1, uint8_t data2);
-    static void processImmediate(uint8_t command, uint8_t data1, uint8_t data2);
     static void setup(void);
     static void process(void);
 

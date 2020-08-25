@@ -55,10 +55,6 @@ void loop(void)
     uint8_t data1 = buf[1];
     uint8_t data2 = buf[2];
 
-    if (command & 0x80) {
-        Dispatcher::processImmediate(command & 0x7f, data1, data2);
-    } else {
-        Dispatcher::enqueue(command, data1, data2);
-    }
+    Dispatcher::enqueue(command, data1, data2);
 #endif
 }

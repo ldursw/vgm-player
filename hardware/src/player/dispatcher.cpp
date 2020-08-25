@@ -11,22 +11,19 @@ IntervalTimer Dispatcher::_timer;
 
 void Dispatcher::enqueue(uint8_t command, uint8_t data1, uint8_t data2)
 {
-    _buffer.put(
-        (command << 16) |
-        (data1 << 8) |
-        data2
-    );
-}
-
-void Dispatcher::processImmediate(uint8_t command, uint8_t data1, uint8_t data2)
-{
     switch (command)
     {
-        case 0x01: // reset
+        case 0x81: // reset
             _buffer.reset();
             Sn76489::setup();
             Ym2612::setup();
             break;
+        default:
+            _buffer.put(
+                (command << 16) |
+                (data1 << 8) |
+                data2
+            );
     }
 }
 
