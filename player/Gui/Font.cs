@@ -1,7 +1,7 @@
 ﻿using System;
 using static SDL2.SDL;
 
-namespace VgmReader
+namespace VgmReader.Gui
 {
     class Font
     {

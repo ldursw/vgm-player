@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using VgmReader.Inputs;
 
-namespace VgmReader
+namespace VgmReader.Inputs
 {
     class VgmData
     {

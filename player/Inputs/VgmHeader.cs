@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace VgmReader
+namespace VgmReader.Inputs
 {
     class VgmHeader
     {

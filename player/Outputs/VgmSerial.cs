@@ -4,19 +4,15 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
+using VgmPlayer.Uitls;
+using VgmReader.Gui;
 using VgmReader.Inputs;
 
-namespace VgmReader
+namespace VgmReader.Outputs
 {
     class VgmSerial
     {
         private static Stream _serial;
-
-        [DllImport("kernel32", EntryPoint = "CreateFileW", SetLastError = true,
-            CharSet = CharSet.Unicode, BestFitMapping = false, ExactSpelling = true)]
-        private static extern IntPtr CreateFile(string lpFileName, int dwDesiredAccess,
-            int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition,
-            int dwFlagsAndAttributes, IntPtr hTemplateFile);
 
         public static void Play(string name, IVgmInput vgm)
         {
@@ -63,7 +59,6 @@ namespace VgmReader
             }
 
             ResetChip();
-            VgmCommandParser.Reset();
             vgm.Dispose();
             _serial?.Flush();
         }
@@ -136,7 +131,7 @@ namespace VgmReader
         {
             return new FileStream(
                 new SafeFileHandle(
-                    CreateFile(
+                    NativeMethods.CreateFile(
                         @"\\.\" + name,
                         0x40000000,
                         0,

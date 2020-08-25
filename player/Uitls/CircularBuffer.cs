@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace VgmReader
+namespace VgmReader.Utils
 {
     class CircularBuffer<T>
     {

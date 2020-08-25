@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VgmReader
+namespace VgmReader.Gui
 {
     class VgmCommandParser
     {

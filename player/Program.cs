@@ -1,4 +1,6 @@
-﻿using VgmReader.Inputs;
+﻿using VgmReader.Gui;
+using VgmReader.Inputs;
+using VgmReader.Outputs;
 
 namespace VgmReader
 {

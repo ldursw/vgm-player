@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace VgmReader
+namespace VgmReader.Gui
 {
     class VgmState
     {

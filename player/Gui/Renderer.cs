@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using VgmReader.Devices;
+using VgmReader.Outputs;
 using static SDL2.SDL;
 
-namespace VgmReader
+namespace VgmReader.Gui
 {
     class Renderer
     {

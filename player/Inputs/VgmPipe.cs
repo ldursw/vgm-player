@@ -5,6 +5,7 @@ using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
+using VgmReader.Utils;
 
 namespace VgmReader.Inputs
 {
