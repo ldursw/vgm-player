@@ -148,9 +148,11 @@ namespace VgmReader.Gui
 
             if (!gotPcm)
             {
+                // Move values 1 sample to the left
                 Array.Copy(VgmState.PcmSamples, 1, VgmState.PcmSamples, 0,
                     VgmState.PcmSamples.Length - 1);
 
+                // Copy last sample
                 VgmState.PcmSamples[^1] = VgmState.PcmSamples[^2];
             }
 
