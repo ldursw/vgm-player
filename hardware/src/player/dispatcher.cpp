@@ -39,15 +39,14 @@ void Dispatcher::setup(void)
     // Start timer with 44.1 kHz frequency.
     // That gives us ~22.675737us per interrupt
     // or ~4081 cycles at 180 MHz.
-#if ENABLE_STREAM
-    _timer.begin(process, (1.0 / 44100.0) * 1000000UL);
-#elif ENABLE_PLAYER
-    _timer.begin(VgmPlayer::play, (1.0 / 44100.0) * 1000000UL);
-#endif
+    _timer.begin(process, (1.0 / 44100.0) * 1'000'000UL);
 }
 
 void Dispatcher::process(void)
 {
+#if ENABLE_PLAYER
+    VgmPlayer::play();
+#elif ENABLE_STREAM
     while (!_buffer.empty())
     {
         if (VgmState::waitSamples > 0)
@@ -63,6 +62,7 @@ void Dispatcher::process(void)
             break;
         }
     }
+#endif
 
     Sn76489::update();
 }

@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 #include "vgmplayer.hpp"
-#include "chip/sn76489.hpp"
 
 bool VgmPlayer::setup(const char *filename)
 {
@@ -13,8 +12,6 @@ bool VgmPlayer::setup(const char *filename)
 
 void VgmPlayer::play(void)
 {
-    Sn76489::update();
-
     if (!VgmFile::isValid())
     {
         return;
