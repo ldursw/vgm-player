@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using VgmPlayer.Structs;
 
 namespace VgmReader.Inputs
 {
     class VgmPCM : IVgmInput
     {
-        public IEnumerable<uint> Instructions => GetInstructions();
+        public IEnumerable<VgmInstruction> Instructions => GetInstructions();
 
         private readonly FileStream _stream;
 
@@ -19,10 +20,10 @@ namespace VgmReader.Inputs
             _stream.Dispose();
         }
 
-        private IEnumerable<uint> GetInstructions()
+        private IEnumerable<VgmInstruction> GetInstructions()
         {
-            yield return VgmInstructions.WaitSample(0x7fff);
-            yield return VgmInstructions.FmWrite(0, 0x2b, 0x80);
+            yield return VgmInstruction.WaitSample(0x7fff);
+            yield return VgmInstruction.FmWrite(0, 0x2b, 0x80);
             
             while (_stream.CanRead && _stream.Position < _stream.Length)
             {
@@ -32,11 +33,11 @@ namespace VgmReader.Inputs
                     break;
                 }
 
-                yield return VgmInstructions.FmWriteSample((byte)sample, 1);
+                yield return VgmInstruction.FmWriteSample((byte)sample, 1);
             }
 
-            yield return VgmInstructions.FmWrite(0, 0x2b, 0x00);
-            yield return VgmInstructions.End();
+            yield return VgmInstruction.FmWrite(0, 0x2b, 0x00);
+            yield return VgmInstruction.End();
         }
     }
 }

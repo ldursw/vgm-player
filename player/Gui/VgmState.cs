@@ -1,18 +1,19 @@
 ﻿using System.Collections.Concurrent;
+using VgmPlayer.Structs;
 
 namespace VgmReader.Gui
 {
     class VgmState
     {
         public static int WaitSamples { get; set; }
-        public static ConcurrentQueue<uint> Commands { get; }
+        public static ConcurrentQueue<VgmInstruction> Commands { get; }
         public static PsgState[] PsgState { get; }
         public static byte[] PcmSamples { get; }
         public static byte[] FmMap { get; }
 
         static VgmState()
         {
-            Commands = new ConcurrentQueue<uint>();
+            Commands = new ConcurrentQueue<VgmInstruction>();
 
             PsgState = new PsgState[4];
             for (var i = 0; i < PsgState.Length; i++)

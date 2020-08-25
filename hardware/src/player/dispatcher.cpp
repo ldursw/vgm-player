@@ -75,29 +75,39 @@ bool Dispatcher::processItem(uint32_t item)
 
     switch (command)
     {
-        case 0:
-        case 1: // fm write
+        case 0: // nop
         {
-            WriteFmCommand::process(command, data1, data2);
-
-            return false;
+            return true;
         }
-        case 2: // psg write
+        case 1: // psg write
         {
             WritePsgCommand::process(data1);
 
             return false;
         }
-        case 3: // wait
+        case 2:
+        case 3: // fm write
         {
-            if (!WaitCommand::process((data1 << 8) | data2))
+            WriteFmCommand::process(command - 2, data1, data2);
+
+            return false;
+        }
+        case 4: // wait
+        {
+            if (!WaitCommand::process((data2 << 8) | data1))
             {
                 return false;
             }
 
             break;
         }
-        case 4: // fm write pcm
+        case 5: // reset chip
+        {
+            Sn76489::setup();
+            Ym2612::setup();
+            break;
+        }
+        case 6: // fm write pcm
         {
             WriteFmCommand::process(0, 0x2a, data1);
 
@@ -108,10 +118,6 @@ bool Dispatcher::processItem(uint32_t item)
 
             break;
         }
-        case 5: // reset chip
-            Sn76489::setup();
-            Ym2612::setup();
-            break;
         default:
         {
             while (true)

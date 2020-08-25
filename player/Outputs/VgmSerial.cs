@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
+using VgmPlayer.Structs;
 using VgmPlayer.Uitls;
 using VgmReader.Gui;
 using VgmReader.Inputs;
@@ -28,37 +29,15 @@ namespace VgmReader.Outputs
         {
             _serial = OpenSerial(name);
 
-            ResetChipImmediate();
+            WriteCommand(VgmInstruction.ResetImmediate());
 
             foreach (var inst in vgm.Instructions)
             {
-                var command = (byte)(inst >> 16);
-                var data1 = (byte)(inst >> 8);
-                var data2 = (byte)inst;
-
-                if (command == 0x01)
-                {
-                    WritePsg(data1);
-                }
-                else if (command == 0x02 || command == 0x03)
-                {
-                    WriteFm((byte)(command - 0x02), data1, data2);
-                }
-                else if (command == 0x04 && (data1 | data2) != 0)
-                {
-                    WaitSamples(data2, data1);
-                }
-                else if (command == 0x05)
-                {
-                    ResetChip();
-                }
-                else if (command == 0x06)
-                {
-                    WriteFmPcm(data1, data2);
-                }
+                WriteCommand(inst);
             }
 
-            ResetChip();
+            WriteCommand(VgmInstruction.End());
+
             vgm.Dispose();
             _serial?.Flush();
         }
@@ -70,55 +49,30 @@ namespace VgmReader.Outputs
                 var sp = _serial;
                 _serial = null;
 
-                sp.Flush();
-                // reset chip immediate
-                sp.WriteByte(0x81);
-                sp.WriteByte(0x00);
-                sp.WriteByte(0x00);
+                SendData(sp, VgmInstruction.ResetImmediate());
                 sp.Flush();
                 sp.Dispose();
             }
         }
 
-        private static void WriteFm(byte port, byte address, byte value)
+        private static void WriteCommand(VgmInstruction instruction)
         {
-            WriteCommand(port, address, value);
+            VgmState.Commands.Enqueue(instruction);
+
+            if (_serial != null)
+            {
+                SendData(_serial, instruction);
+            }
         }
 
-        private static void WritePsg(byte data)
+        private static void SendData(Stream stream, VgmInstruction instruction)
         {
-            WriteCommand(0x02, data, 0x00);
-        }
-
-        private static void WaitSamples(byte high, byte low)
-        {
-            WriteCommand(0x03, low, high);
-        }
-
-        private static void ResetChip()
-        {
-            WriteCommand(0x05, 0x00, 0x00);
-        }
-
-        private static void ResetChipImmediate()
-        {
-            WriteCommand(0x81, 0x00, 0x00);
-        }
-
-        private static void WriteFmPcm(byte sample, byte wait)
-        {
-            WriteCommand(0x04, sample, wait);
-        }
-
-        private static void WriteCommand(byte command, byte arg1, byte arg2)
-        {
-            VgmState.Commands.Enqueue((uint)(
-                ((command << 16) & 0xff0000) |
-                ((arg1 << 8) & 0x00ff00) |
-                (arg2 & 0x0000ff)
-            ));
-
-            _serial?.Write(stackalloc byte[3] { command, arg1, arg2 });
+            stream.Write(stackalloc byte[3]
+            {
+                (byte)instruction.Type,
+                instruction.Data1,
+                instruction.Data2
+            });
         }
 
         private static Stream OpenSerial(string name)

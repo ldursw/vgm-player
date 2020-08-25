@@ -133,7 +133,7 @@ index 0000000..8cb3e4d
 +        per_frame[vdp_pal].usecs)) >> 20);
 +    diff = (samples - dacSamples);
 +    if (diff > 0 && diff <= 255) {
-+        uint8_t dataToSend[3] = { 0x04, v, (uint8_t)diff };
++        uint8_t dataToSend[3] = { 0x06, v, (uint8_t)diff };
 +        writeToSerialPort(dataToSend, 3);
 +
 +        dacWait += diff;
@@ -154,7 +154,7 @@ index 0000000..8cb3e4d
 +    if (dacWait < max) {
 +        uint16_t tmp = max - dacWait;
 +
-+        uint8_t dataToSend[3] = { 0x05, (tmp >> 8), tmp & 0xff };
++        uint8_t dataToSend[3] = { 0x04, (tmp >> 8), tmp & 0xff };
 +        writeToSerialPort(dataToSend, 3);
 +    }
 +

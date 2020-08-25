@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using VgmPlayer.Structs;
 
 namespace VgmReader.Inputs
 {
     class VgmData
     {
-        public IEnumerable<uint> Instructions { get; }
+        public IEnumerable<VgmInstruction> Instructions { get; }
 
         private readonly BinaryReader _reader;
         private long _dataBankOffset;
@@ -22,7 +23,7 @@ namespace VgmReader.Inputs
             Instructions = GetInstructions(header);
         }
 
-        private IEnumerable<uint> GetInstructions(VgmHeader header)
+        private IEnumerable<VgmInstruction> GetInstructions(VgmHeader header)
         {
             yield return WaitSample(0x7fff);
 
@@ -85,7 +86,7 @@ namespace VgmReader.Inputs
                     continue;
                 }
 
-                uint? instr = value switch
+                VgmInstruction? instr = value switch
                 {
                     0x50 => PsgWrite(_reader.ReadByte()),
                     0x52 => FmWrite(0, _reader.ReadByte(), _reader.ReadByte()),
@@ -111,7 +112,7 @@ namespace VgmReader.Inputs
                     throw new Exception($"Unknown instruction {value:X2} at {pos}");
                 }
 
-                if (instr == 0)
+                if (instr.Value.Type == InstructionType.Nop)
                 {
                     continue;
                 }
@@ -120,27 +121,27 @@ namespace VgmReader.Inputs
             }
         }
 
-        private uint PsgWrite(byte data)
+        private VgmInstruction PsgWrite(byte data)
         {
-            return VgmInstructions.PsgWrite(data);
+            return VgmInstruction.PsgWrite(data);
         }
 
-        private uint FmWrite(byte port, byte address, byte value)
+        private VgmInstruction FmWrite(byte port, byte address, byte value)
         {
-            return VgmInstructions.FmWrite(port, address, value);
+            return VgmInstruction.FmWrite(port, address, value);
         }
 
-        private uint WaitSample(ushort value)
+        private VgmInstruction WaitSample(ushort value)
         {
-            return VgmInstructions.WaitSample(value);
+            return VgmInstruction.WaitSample(value);
         }
 
-        private uint End()
+        private VgmInstruction End()
         {
-            return VgmInstructions.End();
+            return VgmInstruction.End();
         }
 
-        private uint FmWriteWait(byte wait)
+        private VgmInstruction FmWriteWait(byte wait)
         {
             var oldPos = _reader.BaseStream.Position;
             _reader.BaseStream.Position = _dataBankOffset + _dataBankIndex++;
@@ -148,10 +149,10 @@ namespace VgmReader.Inputs
             var sample = _reader.ReadByte();
             _reader.BaseStream.Position = oldPos;
 
-            return VgmInstructions.FmWriteSample(sample, wait);
+            return VgmInstruction.FmWriteSample(sample, wait);
         }
 
-        private uint SetDataBank()
+        private VgmInstruction SetDataBank()
         {
             _reader.ReadByte(); // skip 0x66
             _reader.ReadByte(); // type
@@ -160,26 +161,26 @@ namespace VgmReader.Inputs
 
             _reader.BaseStream.Position += _dataBankSize;
 
-            return 0;
+            return VgmInstruction.Nop();
         }
 
-        private uint SeekDataBank(uint offset)
+        private VgmInstruction SeekDataBank(uint offset)
         {
             _dataBankIndex = offset;
 
-            return 0;
+            return VgmInstruction.Nop();
         }
 
-        private uint PcmRamWrite()
+        private VgmInstruction PcmRamWrite()
         {
             _reader.BaseStream.Position += 11;
 
-            return 0;
+            return VgmInstruction.Nop();
         }
 
-        private uint PwmWrite(byte address, byte value)
+        private VgmInstruction PwmWrite(byte address, byte value)
         {
-            return 0;
+            return VgmInstruction.Nop();
         }
     }
 }

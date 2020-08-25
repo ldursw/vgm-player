@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using VgmPlayer.Structs;
 using VgmReader.Devices;
 using VgmReader.Outputs;
 using static SDL2.SDL;
@@ -101,24 +102,23 @@ namespace VgmReader.Gui
                     break;
                 }
 
-                var command = (byte)((item >> 16) & 0xff);
-                var data1 = (byte)((item >> 8) & 0xff);
-                var data2 = (byte)(item & 0xff);
-
-                switch (command)
+                switch (item.Type)
                 {
-                    case 0:
-                    case 1: // fm write
-                        VgmCommandParser.ParseFm(command, data1, data2);
+                    case InstructionType.PsgWrite:
+                        VgmCommandParser.ParsePsg(item.Data1);
+                        // _sn76489.Write(item.Data1);
                         stop = true;
                         break;
-                    case 2: // psg write
-                        VgmCommandParser.ParsePsg(data1);
-                        // _sn76489.Write(data1);
+                    case InstructionType.FmWrite0:
+                        VgmCommandParser.ParseFm(0, item.Data1, item.Data2);
                         stop = true;
                         break;
-                    case 3: // wait
-                        VgmState.WaitSamples = (data1 << 8) | data2;
+                    case InstructionType.FmWrite1:
+                        VgmCommandParser.ParseFm(1, item.Data1, item.Data2);
+                        stop = true;
+                        break;
+                    case InstructionType.WaitSample:
+                        VgmState.WaitSamples = (item.Data2 << 8) | item.Data1;
 
                         if (VgmState.WaitSamples <= 0)
                         {
@@ -126,10 +126,15 @@ namespace VgmReader.Gui
                         }
 
                         break;
-                    case 4: // fm write pcm
-                        VgmCommandParser.ParseFm(0, 0x2a, data1);
-                        VgmState.WaitSamples = data2;
-                        // _lastSample = data1;
+                    case InstructionType.End:
+                    case InstructionType.ResetImmediate:
+                        VgmCommandParser.Reset();
+                        stop = true;
+                        break;
+                    case InstructionType.FmSample: // fm write pcm
+                        VgmCommandParser.ParseFm(0, 0x2a, item.Data1);
+                        VgmState.WaitSamples = item.Data2;
+                        // _lastSample = item.Data1;
                         gotPcm = true;
 
                         if (VgmState.WaitSamples <= 0)
@@ -137,11 +142,6 @@ namespace VgmReader.Gui
                             stop = true;
                         }
 
-                        break;
-                    case 5:
-                    case 0x81: // reset chip
-                        VgmCommandParser.Reset();
-                        stop = true;
                         break;
                 }
             }

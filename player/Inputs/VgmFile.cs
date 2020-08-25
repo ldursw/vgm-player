@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using VgmPlayer.Structs;
 
 namespace VgmReader.Inputs
 {
@@ -8,7 +9,7 @@ namespace VgmReader.Inputs
     {
         public VgmHeader Header { get; }
         public VgmData Data { get; }
-        public IEnumerable<uint> Instructions => Data.Instructions;
+        public IEnumerable<VgmInstruction> Instructions => Data.Instructions;
 
         private readonly Stream _stream;
         private readonly BinaryReader _binaryReader;
