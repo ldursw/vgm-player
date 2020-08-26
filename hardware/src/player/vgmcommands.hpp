@@ -9,11 +9,11 @@
 class WaitCommand
 {
 public:
-    static bool process(int32_t samples)
+    static bool process(uint32_t samples)
     {
-        VgmState::waitSamples = samples;
+        VgmState::waitSamples += samples;
 
-        return samples > 0;
+        return VgmState::waitSamples > 0;
     }
 };
 

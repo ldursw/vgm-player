@@ -10,7 +10,7 @@
 class VgmState
 {
 public:
-    static int32_t waitSamples;
+    static uint32_t waitSamples;
 #ifdef ENABLE_PLAYER
     static FileBuffer pcmBank;
 #endif
