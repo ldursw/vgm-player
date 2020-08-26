@@ -51,10 +51,6 @@ void loop(void)
         index += Serial.readBytes(buf + index, sizeof(buf) - index);
     }
 
-    uint8_t command = buf[0];
-    uint8_t data1 = buf[1];
-    uint8_t data2 = buf[2];
-
-    Dispatcher::enqueue(command, data1, data2);
+    Dispatcher::enqueue(Instruction(buf[0], buf[1], buf[2]));
 #endif
 }

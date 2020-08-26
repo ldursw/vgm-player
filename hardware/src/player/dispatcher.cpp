@@ -6,24 +6,21 @@
 #include "player/vgmstate.hpp"
 #include "player/vgmcommands.hpp"
 
-CircularBuffer<uint32_t, DISPATCHER_BUFFER_SIZE> Dispatcher::_buffer;
+CircularBuffer<Instruction, DISPATCHER_BUFFER_SIZE> Dispatcher::_buffer;
 IntervalTimer Dispatcher::_timer;
 
-void Dispatcher::enqueue(uint8_t command, uint8_t data1, uint8_t data2)
+void Dispatcher::enqueue(Instruction instruction)
 {
-    switch (command)
+    switch (instruction.type())
     {
-        case 0x81: // reset
+        case InstructionType::ResetImmediate:
             _buffer.reset();
             Sn76489::setup();
             Ym2612::setup();
             break;
         default:
-            _buffer.put(
-                (command << 16) |
-                (data1 << 8) |
-                data2
-            );
+            _buffer.put(instruction);
+            break;
     }
 }
 
@@ -53,7 +50,7 @@ void Dispatcher::process(void)
             break;
         }
 
-        uint32_t item;
+        Instruction item;
         if (!_buffer.get(&item) || !processItem(item))
         {
             break;
@@ -64,51 +61,52 @@ void Dispatcher::process(void)
     Sn76489::update();
 }
 
-bool Dispatcher::processItem(uint32_t item)
+bool Dispatcher::processItem(Instruction item)
 {
-    uint8_t command = (item >> 16) & 0xff;
-    uint8_t data1 = (item >> 8) & 0xff;
-    uint8_t data2 = item & 0xff;
-
-    switch (command)
+    switch (item.type())
     {
-        case 0: // nop
+        case InstructionType::Nop:
         {
             return true;
         }
-        case 1: // psg write
+        case InstructionType::PsgWrite:
         {
-            WritePsgCommand::process(data1);
+            WritePsgCommand::process(item.data1());
 
             return false;
         }
-        case 2:
-        case 3: // fm write
+        case InstructionType::FmWrite0:
         {
-            WriteFmCommand::process(command - 2, data1, data2);
+            WriteFmCommand::process(0, item.data1(), item.data2());
 
             return false;
         }
-        case 4: // wait
+        case InstructionType::FmWrite1:
         {
-            if (!WaitCommand::process((data2 << 8) | data1))
+            WriteFmCommand::process(1, item.data1(), item.data2());
+
+            return false;
+        }
+        case InstructionType::WaitSample:
+        {
+            if (!WaitCommand::process(item.data()))
             {
                 return false;
             }
 
             break;
         }
-        case 5: // reset chip
+        case InstructionType::End:
         {
             Sn76489::setup();
             Ym2612::setup();
             break;
         }
-        case 6: // fm write pcm
+        case InstructionType::FmSample:
         {
-            WriteFmCommand::process(0, 0x2a, data1);
+            WriteFmCommand::process(0, 0x2a, item.data1());
 
-            if (!WaitCommand::process(data2))
+            if (!WaitCommand::process(item.data2()))
             {
                 return false;
             }
