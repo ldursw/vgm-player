@@ -91,8 +91,6 @@ bool Dispatcher::processItem(Instruction item)
                 digitalWriteFast(13, LOW);
                 delay(200);
             }
-
-            return false;
     }
 
     return true;
