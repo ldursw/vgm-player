@@ -66,55 +66,24 @@ bool Dispatcher::processItem(Instruction item)
     switch (item.type())
     {
         case InstructionType::Nop:
-        {
             return true;
-        }
         case InstructionType::PsgWrite:
-        {
-            WritePsgCommand::process(item.data1());
-
-            return false;
-        }
+            return WritePsgCommand::process(item.data1());
         case InstructionType::FmWrite0:
-        {
-            WriteFmCommand::process(0, item.data1(), item.data2());
-
-            return false;
-        }
+            return WriteFmCommand::process(0, item.data1(), item.data2());
         case InstructionType::FmWrite1:
-        {
-            WriteFmCommand::process(1, item.data1(), item.data2());
-
-            return false;
-        }
+            return WriteFmCommand::process(1, item.data1(), item.data2());
         case InstructionType::WaitSample:
-        {
-            if (!WaitCommand::process(item.data()))
-            {
-                return false;
-            }
-
-            break;
-        }
+            return WaitCommand::process(item.data());
         case InstructionType::End:
-        {
             Sn76489::setup();
             Ym2612::setup();
             break;
-        }
         case InstructionType::FmSample:
-        {
             WriteFmCommand::process(0, 0x2a, item.data1());
 
-            if (!WaitCommand::process(item.data2()))
-            {
-                return false;
-            }
-
-            break;
-        }
+            return WaitCommand::process(item.data2());
         default:
-        {
             while (true)
             {
                 digitalWriteFast(13, HIGH);
@@ -124,7 +93,6 @@ bool Dispatcher::processItem(Instruction item)
             }
 
             return false;
-        }
     }
 
     return true;
