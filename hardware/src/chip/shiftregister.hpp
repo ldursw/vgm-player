@@ -9,8 +9,6 @@ public:
     static void pushData(uint8_t);
 
 private:
-    inline static void pushBit(uint8_t);
-
     static bool _setup;
 };
 

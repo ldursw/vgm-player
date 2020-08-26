@@ -32,23 +32,14 @@ void ShiftRegister::pushData(uint8_t data)
 
     digitalWriteFast(SR_LATCH, LOW);
 
-    pushBit((data >> 7) & 0x01);
-    pushBit((data >> 6) & 0x01);
-    pushBit((data >> 5) & 0x01);
-    pushBit((data >> 4) & 0x01);
-    pushBit((data >> 3) & 0x01);
-    pushBit((data >> 2) & 0x01);
-    pushBit((data >> 1) & 0x01);
-    pushBit((data >> 0) & 0x01);
+    for (int8_t i = 7; i >= 0; i--)
+    {
+        digitalWriteFast(SR_DATA, data & (1 << i));
+        digitalWriteFast(SR_CLOCK, HIGH);
+        asm("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n");
+        digitalWriteFast(SR_CLOCK, LOW);
+    }
 
     digitalWriteFast(SR_LATCH, HIGH);
     asm("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n");
-}
-
-__attribute__((always_inline)) void ShiftRegister::pushBit(uint8_t data)
-{
-    digitalWriteFast(SR_DATA, data);
-    digitalWriteFast(SR_CLOCK, HIGH);
-    asm("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n");
-    digitalWriteFast(SR_CLOCK, LOW);
 }
