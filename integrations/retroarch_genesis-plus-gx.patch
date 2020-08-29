@@ -154,7 +154,7 @@ index 0000000..8cb3e4d
 +    if (dacWait < max) {
 +        uint16_t tmp = max - dacWait;
 +
-+        uint8_t dataToSend[3] = { 0x04, (tmp >> 8), tmp & 0xff };
++        uint8_t dataToSend[3] = { 0x04, tmp & 0xff, (tmp >> 8) };
 +        writeToSerialPort(dataToSend, 3);
 +    }
 +

@@ -122,7 +122,7 @@ index 6660dbd..6c1873b 100644
  		memcpy(&buf[1], &tmp, sizeof(tmp));
  		fwrite(buf, sizeof(buf), 1, vgm_dump_file);
 +
-+		uint8_t dataToSend[3] = {0x04, buf[2], buf[1]};
++		uint8_t dataToSend[3] = {0x04, buf[1], buf[2]};
 +		writeToSerialPort(dataToSend, 3);
  	}
  	vgm_dump_samples_total += max;
