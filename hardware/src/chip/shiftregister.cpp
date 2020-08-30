@@ -1,11 +1,9 @@
 #include "shiftregister.hpp"
 #include <Arduino.h>
-
-#define SR_DATA 32
-#define SR_LATCH 31
-#define SR_CLOCK 30
+#include <SPI.h>
 
 bool ShiftRegister::_setup = false;
+static SPISettings _srSpiSettings(2'000'000, MSBFIRST, SPI_MODE0);
 
 void ShiftRegister::setup(void)
 {
@@ -14,32 +12,27 @@ void ShiftRegister::setup(void)
         return;
     }
 
-    pinMode(SR_DATA, OUTPUT);
-    pinMode(SR_CLOCK, OUTPUT);
-    pinMode(SR_LATCH, OUTPUT);
+    pinMode(MOSI, OUTPUT);
+    pinMode(SCK, OUTPUT);
+    pinMode(SS, OUTPUT);
 
-    digitalWriteFast(SR_DATA, LOW);
-    digitalWriteFast(SR_CLOCK, LOW);
-    digitalWriteFast(SR_LATCH, LOW);
+    digitalWriteFast(MOSI, LOW);
+    digitalWriteFast(SCK, LOW);
+    digitalWriteFast(SS, LOW);
+
+    SPI.begin();
 
     _setup = true;
 }
 
 void ShiftRegister::pushData(uint8_t data)
 {
-    // We have to bit-bang the shift register because
-    // the SPI library doesn't work in interrupts
+    digitalWriteFast(SS, LOW);
 
-    digitalWriteFast(SR_LATCH, LOW);
+    SPI.beginTransaction(_srSpiSettings);
+    SPI.transfer(data);
+    SPI.endTransaction();
 
-    for (int8_t i = 7; i >= 0; i--)
-    {
-        digitalWriteFast(SR_DATA, data & (1 << i));
-        digitalWriteFast(SR_CLOCK, HIGH);
-        asm("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n");
-        digitalWriteFast(SR_CLOCK, LOW);
-    }
-
-    digitalWriteFast(SR_LATCH, HIGH);
+    digitalWriteFast(SS, HIGH);
     asm("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n");
 }

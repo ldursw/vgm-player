@@ -45,16 +45,12 @@ void Sn76489::setup(void)
 void Sn76489::pushData(uint8_t data)
 {
 #ifdef USE_REAL_PSG
-    digitalWriteFast(13, HIGH);
-
     ShiftRegister::pushData(data);
 
     digitalWriteFast(PSG_WE, LOW);
     wait10ns();
     digitalWriteFast(PSG_WE, HIGH);
     wait10ns();
-
-    digitalWriteFast(13, LOW);
 #else
     EmulatedPsg::write(data);
 #endif

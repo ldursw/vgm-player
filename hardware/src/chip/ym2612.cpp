@@ -35,8 +35,6 @@ void Ym2612::setup(void)
 
 void Ym2612::pushData(uint8_t port, uint8_t data)
 {
-    digitalWriteFast(13, HIGH);
-
     port &= 0x03;
     digitalWriteFast(FM_A0, port & 0x01);
     digitalWriteFast(FM_A1, (port & 0x02) >> 1);
@@ -52,6 +50,4 @@ void Ym2612::pushData(uint8_t port, uint8_t data)
     asm("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n");
     asm("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n");
     digitalWriteFast(FM_WR, HIGH);
-
-    digitalWriteFast(13, LOW);
 }
