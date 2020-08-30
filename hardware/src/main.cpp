@@ -20,7 +20,7 @@ void setup(void)
     Dispatcher::setup();
 
 #ifdef ENABLE_STREAM
-    Serial.begin(115200);
+    SerialUSB.begin(115200);
 #endif
 
 #ifdef ENABLE_PLAYER
@@ -47,7 +47,7 @@ void loop(void)
     uint8_t index = 0;
     while (index < sizeof(buf))
     {
-        index += Serial.readBytes(buf + index, sizeof(buf) - index);
+        index += SerialUSB.readBytes(buf + index, sizeof(buf) - index);
     }
 
     Dispatcher::enqueue(Instruction(buf[0], buf[1], buf[2]));

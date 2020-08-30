@@ -16,6 +16,7 @@
 #elif TEENSYDUINO
 
 #define SdFatCls SdFatSdio
+#define SerialUSB Serial
 #define PSG_WE 29
 #define PSG_DAC A21
 #define FM_IC 28
