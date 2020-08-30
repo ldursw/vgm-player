@@ -26,7 +26,7 @@ namespace VgmReader.Inputs
             yield return VgmInstruction.WaitSample(0x7fff);
             yield return VgmInstruction.FmWrite(0, 0x2b, 0x80);
             yield return VgmInstruction.FmWrite(1, 0xb6, 0xc0);
-            
+
             while (_stream.CanRead && _stream.Position < _stream.Length)
             {
                 var sample = _stream.ReadByte();
