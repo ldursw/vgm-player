@@ -10,6 +10,7 @@ namespace VgmReader.Gui
         public static PsgState[] PsgState { get; }
         public static byte[] PcmSamples { get; }
         public static byte[] FmMap { get; }
+        public static YmState FmState { get; }
 
         static VgmState()
         {
@@ -28,6 +29,7 @@ namespace VgmReader.Gui
             }
 
             FmMap = new byte[0x200];
+            FmState = new YmState();
         }
     }
 

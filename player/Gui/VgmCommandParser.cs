@@ -9,6 +9,9 @@ namespace VgmReader.Gui
 
         public static void Reset()
         {
+            // reset FM
+            VgmState.FmState.Reset();
+
             // silence PSG
 
             // channel 0 volume mute
@@ -100,6 +103,8 @@ namespace VgmReader.Gui
             {
                 Array.Fill<byte>(VgmState.PcmSamples, 50);
             }
+
+            VgmState.FmState.Write(port, address, value);
         }
 
         private static byte Map(ushort x, ushort in_min, ushort in_max)
