@@ -91,11 +91,11 @@ namespace VgmPlayer.Gui.Elements
                 freq = Math.Min(freq, 0x3fff);
 
                 var fy = Map((ushort)freq, 0x3fff, 0);
-                Rect.DrawRectangle(renderer, x, y + fy, 10, 3, 0xff0000);
+                Rect.DrawRectangle(renderer, x, y + fy - 1, 10, 3, 0xff0000);
                 if (slot.sl > slot.tl)
                 {
                     var sy = Map(slot.sl, 0x3fff, 0);
-                    Rect.DrawRectangle(renderer, x, y + sy, 10, 3, 0xbbbbbb);
+                    Rect.DrawRectangle(renderer, x, y + sy - 1, 10, 3, 0xbbbbbb);
                 }
             }
         }

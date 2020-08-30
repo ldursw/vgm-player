@@ -34,7 +34,7 @@ namespace VgmPlayer.Gui.Elements
         {
             Rect.DrawRectangle(renderer, x, y, Width, Height, 0x005500);
             Rect.DrawRectangle(renderer, x, y + (Height - volume), Width, volume, 0x00ff00);
-            Rect.DrawRectangle(renderer, x, y + (Height - tone) - 2, Width, 4, 0xff0000);
+            Rect.DrawRectangle(renderer, x, y + (Height - tone) - 1, Width, 3, 0xff0000);
         }
     }
 }
