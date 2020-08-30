@@ -23,7 +23,7 @@
  */
 #ifndef MinimumSerial_h
 #define MinimumSerial_h
-#include "SysCall.h"
+#include "SysCall.hpp"
 //==============================================================================
 /**
  * \class MinimumSerial

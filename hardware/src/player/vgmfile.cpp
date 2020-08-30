@@ -1,6 +1,6 @@
 #ifdef ENABLE_PLAYER
 
-#include <SdFat.h>
+#include <SdFat.hpp>
 #include <cstdint>
 #include <cstdlib>
 #include "vgmfile.hpp"

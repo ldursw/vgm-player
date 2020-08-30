@@ -17,7 +17,7 @@
  * along with the FatLib Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "FmtNumber.h"
+#include "FmtNumber.hpp"
 // Use Stimmer div/mod 10 on avr
 #ifdef __AVR__
 #include <avr/pgmspace.h>
@@ -451,5 +451,3 @@ float scanFloat(const char* str, char** ptr) {
 fail:
   return 0;
 }
-
-

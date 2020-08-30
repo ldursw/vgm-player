@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 /**
- * @file 
+ * @file
  * @brief  Software SPI.
  *
  * @defgroup softSPI Software SPI
@@ -28,7 +28,7 @@
 
 #ifndef SoftSPI_h
 #define SoftSPI_h
-#include "DigitalPin.h"
+#include "DigitalPin.hpp"
 //------------------------------------------------------------------------------
 /** Nop for timing. */
 #define nop asm volatile ("nop\n\t")

@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include <string.h>
-#include "FatVolume.h"
+#include "FatVolume.hpp"
 //------------------------------------------------------------------------------
 cache_t* FatCache::read(uint32_t lbn, uint8_t option) {
   if (m_lbn != lbn) {

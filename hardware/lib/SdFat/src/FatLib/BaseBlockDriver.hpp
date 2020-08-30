@@ -19,7 +19,7 @@
  */
 #ifndef BaseBlockDriver_h
 #define BaseBlockDriver_h
-#include "FatLibConfig.h"
+#include "FatLibConfig.hpp"
 /**
  * \class BaseBlockDriver
  * \brief Base block driver.
@@ -33,12 +33,12 @@ class BaseBlockDriver {
    * \param[out] dst Pointer to the location that will receive the data.
    * \return The value true is returned for success and
    * the value false is returned for failure.
-   */  
+   */
   virtual bool readBlock(uint32_t block, uint8_t* dst) = 0;
   /** End multi-block transfer and go to idle state.
    * \return The value true is returned for success and
    * the value false is returned for failure.
-   */     
+   */
   virtual bool syncBlocks() = 0;
   /**
    * Writes a 512 byte block to an SD card.
@@ -47,7 +47,7 @@ class BaseBlockDriver {
    * \param[in] src Pointer to the location of the data to be written.
    * \return The value true is returned for success and
    * the value false is returned for failure.
-   */    
+   */
   virtual bool writeBlock(uint32_t block, const uint8_t* src) = 0;
 #if USE_MULTI_BLOCK_IO
   /**
@@ -58,7 +58,7 @@ class BaseBlockDriver {
    * \param[out] dst Pointer to the location that will receive the data.
    * \return The value true is returned for success and
    * the value false is returned for failure.
-   */  
+   */
   virtual bool readBlocks(uint32_t block, uint8_t* dst, size_t nb) = 0;
   /**
    * Write multiple 512 byte blocks to an SD card.
@@ -68,7 +68,7 @@ class BaseBlockDriver {
    * \param[in] src Pointer to the location of the data to be written.
    * \return The value true is returned for success and
    * the value false is returned for failure.
-   */    
+   */
   virtual bool writeBlocks(uint32_t block, const uint8_t* src, size_t nb) = 0;
 #endif  // USE_MULTI_BLOCK_IO
 };

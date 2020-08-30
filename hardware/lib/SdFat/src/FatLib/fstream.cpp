@@ -17,7 +17,7 @@
  * along with the FatLib Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "fstream.h"
+#include "fstream.hpp"
 //==============================================================================
 /// @cond SHOW_PROTECTED
 int16_t FatStreamBase::getch() {

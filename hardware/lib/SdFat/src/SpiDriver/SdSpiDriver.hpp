@@ -25,8 +25,8 @@
 #define SdSpiDriver_h
 #include <Arduino.h>
 #include "SPI.h"
-#include "SdSpiBaseDriver.h"
-#include "SdFatConfig.h"
+#include "SdSpiBaseDriver.hpp"
+#include "SdFatConfig.hpp"
 //-----------------------------------------------------------------------------
 /** SDCARD_SPI is defined if board has built-in SD card socket */
 #ifndef SDCARD_SPI
@@ -194,9 +194,9 @@ class SdSpiAltDriver {
 //------------------------------------------------------------------------------
 #if ENABLE_SOFTWARE_SPI_CLASS || defined(DOXYGEN)
 #ifdef ARDUINO
-#include "SoftSPI.h"
+#include "SoftSPI.hpp"
 #elif defined(PLATFORM_ID)  // Only defined if a Particle device
-#include "SoftSPIParticle.h"
+#include "SoftSPIParticle.hpp"
 #endif  // ARDUINO
 /**
  * \class SdSpiSoftDriver

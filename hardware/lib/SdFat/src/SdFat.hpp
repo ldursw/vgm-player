@@ -23,10 +23,10 @@
  * \file
  * \brief SdFat class
  */
-#include "SysCall.h"
-#include "BlockDriver.h"
-#include "FatLib/FatLib.h"
-#include "SdCard/SdioCard.h"
+#include "SysCall.hpp"
+#include "BlockDriver.hpp"
+#include "FatLib/FatLib.hpp"
+#include "SdCard/SdioCard.hpp"
 //------------------------------------------------------------------------------
 /** SdFat version */
 #define SD_FAT_VERSION "1.0.3"

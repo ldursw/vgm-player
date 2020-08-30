@@ -27,10 +27,10 @@
 #include <string.h>
 #include <stddef.h>
 #include <limits.h>
-#include "FatLibConfig.h"
-#include "FatApiConstants.h"
-#include "FatStructs.h"
-#include "FatVolume.h"
+#include "FatLibConfig.hpp"
+#include "FatApiConstants.hpp"
+#include "FatStructs.hpp"
+#include "FatVolume.hpp"
 class FatFileSystem;
 //------------------------------------------------------------------------------
 // Stuff to store strings in AVR flash.
@@ -232,7 +232,7 @@ class FatFile {
    *
    * \return The value true is returned for success and
    * the value false, is returned for failure.
-   */                        
+   */
   bool createContiguous(const char* path, uint32_t size) {
     return createContiguous(m_cwd, path, size);
   }
@@ -377,7 +377,7 @@ class FatFile {
    *                  The array must be at least 13 bytes long.
    * \return The value true, is returned for success and
    * the value false, is returned for failure.
-   */  
+   */
   bool getSFN(char* name);
   /** \return True if this is a directory else false. */
   bool isDir() const {
@@ -670,7 +670,7 @@ class FatFile {
    *
    * \return The number of characters printed is returned
    *         for success and zero is returned for failure.
-   */  
+   */
   size_t printSFN(print_t* pr);
   /** Read the next byte from a file.
    *

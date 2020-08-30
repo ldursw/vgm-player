@@ -17,20 +17,37 @@
  * along with the Arduino SdSpiCard Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#ifndef SdioCard_h
-#define SdioCard_h
-#include "SysCall.h"
-#include "BlockDriver.h"
+#ifndef SdSpiCard_h
+#define SdSpiCard_h
 /**
- * \class SdioCard
- * \brief Raw SDIO access to SD and SDHC flash memory cards.
+ * \file
+ * \brief SdSpiCard class for V2 SD/SDHC cards
  */
-class SdioCard : public BaseBlockDriver {
+#include <stddef.h>
+#include "SysCall.hpp"
+#include "SdInfo.hpp"
+#include "../FatLib/BaseBlockDriver.hpp"
+#include "../SpiDriver/SdSpiDriver.hpp"
+//==============================================================================
+/**
+ * \class SdSpiCard
+ * \brief Raw access to SD and SDHC flash memory cards via SPI protocol.
+ */
+#if ENABLE_EXTENDED_TRANSFER_CLASS || ENABLE_SDIO_CLASS
+class SdSpiCard : public BaseBlockDriver {
+#else  // ENABLE_EXTENDED_TRANSFER_CLASS || ENABLE_SDIO_CLASS
+class SdSpiCard {
+#endif  // ENABLE_EXTENDED_TRANSFER_CLASS || ENABLE_SDIO_CLASS
  public:
+  /** Construct an instance of SdSpiCard. */
+  SdSpiCard() : m_errorCode(SD_CARD_ERROR_INIT_NOT_CALLED), m_type(0) {}
   /** Initialize the SD card.
+   * \param[in] spi SPI driver for card.
+   * \param[in] csPin card chip select pin.
+   * \param[in] spiSettings SPI speed, mode, and bit order.
    * \return true for success else false.
    */
-  bool begin();
+  bool begin(SdSpiDriver* spi, uint8_t csPin, SPISettings spiSettings);
   /**
    * Determine the size of an SD flash memory card.
    *
@@ -52,22 +69,35 @@ class SdioCard : public BaseBlockDriver {
    * the value false is returned for failure.
    */
   bool erase(uint32_t firstBlock, uint32_t lastBlock);
+  /** Determine if card supports single block erase.
+   *
+   * \return true is returned if single block erase is supported.
+   * false is returned if single block erase is not supported.
+   */
+  bool eraseSingleBlockEnable();
+  /**
+   *  Set SD error code.
+   *  \param[in] code value for error code.
+   */
+  void error(uint8_t code) {
+    m_errorCode = code;
+  }
   /**
    * \return code for the last error. See SdInfo.h for a list of error codes.
    */
-  uint8_t errorCode();
+  int errorCode() const {
+    return m_errorCode;
+  }
   /** \return error data for last error. */
-  uint32_t errorData();
-  /** \return error line for last error. Tmp function for debug. */
-  uint32_t errorLine();
+  int errorData() const {
+    return m_status;
+  }
   /**
-   * Check for busy with CMD13.
+   * Check for busy.  MISO low indicates the card is busy.
    *
    * \return true if busy else false.
    */
   bool isBusy();
-  /** \return the SD clock frequency in kHz. */
-  uint32_t kHzSdClk();
   /**
    * Read a 512 byte block from an SD card.
    *
@@ -96,7 +126,9 @@ class SdioCard : public BaseBlockDriver {
    *
    * \return true for success or false for failure.
    */
-  bool readCID(void* cid);
+  bool readCID(cid_t* cid) {
+    return readRegister(CMD10, cid);
+  }
   /**
    * Read a card's CSD register. The CSD contains Card-Specific Data that
    * provides information regarding access to the card's contents.
@@ -105,7 +137,9 @@ class SdioCard : public BaseBlockDriver {
    *
    * \return true for success or false for failure.
    */
-  bool readCSD(void* csd);
+  bool readCSD(csd_t* csd) {
+    return readRegister(CMD9, csd);
+  }
   /** Read one data block in a multiple block read sequence
    *
    * \param[out] dst Pointer to the location for the data to be read.
@@ -122,7 +156,7 @@ class SdioCard : public BaseBlockDriver {
   bool readOCR(uint32_t* ocr);
   /** Start a read multiple blocks sequence.
    *
-   * \param[in] lba Address of first block in sequence.
+   * \param[in] blockNumber Address of first block in sequence.
    *
    * \note This function is used with readData() and readStop() for optimized
    * multiple block reads.  SPI chipSelect must be low for the entire sequence.
@@ -130,18 +164,13 @@ class SdioCard : public BaseBlockDriver {
    * \return The value true is returned for success and
    * the value false is returned for failure.
    */
-  bool readStart(uint32_t lba);
-  /** Start a read multiple blocks sequence.
-   *
-   * \param[in] lba Address of first block in sequence.
-   * \param[in] count Maximum block count.
-   * \note This function is used with readData() and readStop() for optimized
-   * multiple block reads.  SPI chipSelect must be low for the entire sequence.
-   *
+  bool readStart(uint32_t blockNumber);
+  /** Return the 64 byte card status
+   * \param[out] status location for 64 status bytes.
    * \return The value true is returned for success and
    * the value false is returned for failure.
    */
-  bool readStart(uint32_t lba, uint32_t count);
+  bool readStatus(uint8_t* status);
   /** End a read multiple blocks sequence.
    *
    * \return The value true is returned for success and
@@ -149,11 +178,13 @@ class SdioCard : public BaseBlockDriver {
    */
   bool readStop();
   /** \return success if sync successful. Not for user apps. */
-  bool syncBlocks();
+  bool syncBlocks() {return true;}
   /** Return the card type: SD V1, SD V2 or SDHC
    * \return 0 - SD V1, 1 - SD V2, or 3 - SDHC.
    */
-  uint8_t type();
+  int type() const {
+    return m_type;
+  }
   /**
    * Writes a 512 byte block to an SD card.
    *
@@ -181,7 +212,7 @@ class SdioCard : public BaseBlockDriver {
   bool writeData(const uint8_t* src);
   /** Start a write multiple blocks sequence.
    *
-   * \param[in] lba Address of first block in sequence.
+   * \param[in] blockNumber Address of first block in sequence.
    *
    * \note This function is used with writeData() and writeStop()
    * for optimized multiple block writes.
@@ -189,57 +220,99 @@ class SdioCard : public BaseBlockDriver {
    * \return The value true is returned for success and
    * the value false is returned for failure.
    */
-  bool writeStart(uint32_t lba);
-  /** Start a write multiple blocks sequence.
-   *
-   * \param[in] lba Address of first block in sequence.
-   * \param[in] count Maximum block count.
-   * \note This function is used with writeData() and writeStop()
-   * for optimized multiple block writes.
-   *
-   * \return The value true is returned for success and
-   * the value false is returned for failure.
-   */
-  bool writeStart(uint32_t lba, uint32_t count);
+  bool writeStart(uint32_t blockNumber);
 
+  /** Start a write multiple blocks sequence with pre-erase.
+   *
+   * \param[in] blockNumber Address of first block in sequence.
+   * \param[in] eraseCount The number of blocks to be pre-erased.
+   *
+   * \note This function is used with writeData() and writeStop()
+   * for optimized multiple block writes.
+   *
+   * \return The value true is returned for success and
+   * the value false is returned for failure.
+   */
+  bool writeStart(uint32_t blockNumber, uint32_t eraseCount);
   /** End a write multiple blocks sequence.
    *
    * \return The value true is returned for success and
    * the value false is returned for failure.
    */
   bool writeStop();
+  /** Set CS low and activate the card. */
+  void spiStart();
+  /** Set CS high and deactivate the card. */
+  void spiStop();
+
+ private:
+  // private functions
+  uint8_t cardAcmd(uint8_t cmd, uint32_t arg) {
+    cardCommand(CMD55, 0);
+    return cardCommand(cmd, arg);
+  }
+  uint8_t cardCommand(uint8_t cmd, uint32_t arg);
+  bool isTimedOut(uint16_t startMS, uint16_t timeoutMS);
+  bool readData(uint8_t* dst, size_t count);
+  bool readRegister(uint8_t cmd, void* buf);
+
+  void type(uint8_t value) {
+    m_type = value;
+  }
+
+  bool waitNotBusy(uint16_t timeoutMS);
+  bool writeData(uint8_t token, const uint8_t* src);
+
+  //---------------------------------------------------------------------------
+  // functions defined in SdSpiDriver.h
+  void spiActivate() {
+    m_spiDriver->activate();
+  }
+  void spiDeactivate() {
+    m_spiDriver->deactivate();
+  }
+  uint8_t spiReceive() {
+    return m_spiDriver->receive();
+  }
+  uint8_t spiReceive(uint8_t* buf, size_t n) {
+    return  m_spiDriver->receive(buf, n);
+  }
+  void spiSend(uint8_t data) {
+     m_spiDriver->send(data);
+  }
+  void spiSend(const uint8_t* buf, size_t n) {
+    m_spiDriver->send(buf, n);
+  }
+  void spiSelect() {
+    m_spiDriver->select();
+  }
+  void spiUnselect() {
+    m_spiDriver->unselect();
+  }
+  uint8_t m_errorCode;
+  SdSpiDriver *m_spiDriver;
+  bool    m_spiActive;
+  uint8_t m_status;
+  uint8_t m_type;
 };
 //==============================================================================
 /**
- * \class SdioCardEX
+ * \class SdSpiCardEX
  * \brief Extended SD I/O block driver.
  */
-class SdioCardEX : public SdioCard {
+class SdSpiCardEX : public SdSpiCard {
  public:
   /** Initialize the SD card
    *
+   * \param[in] spi SPI driver.
+   * \param[in] csPin Card chip select pin number.
+   * \param[in] spiSettings SPI speed, mode, and bit order.
    * \return The value true is returned for success and
    * the value false is returned for failure.
    */
-  bool begin() {
+  bool begin(SdSpiDriver* spi, uint8_t csPin, SPISettings spiSettings) {
     m_curState = IDLE_STATE;
-    return SdioCard::begin();
-  }
-  /** Erase a range of blocks.
-   *
-   * \param[in] firstBlock The address of the first block in the range.
-   * \param[in] lastBlock The address of the last block in the range.
-   *
-   * \note This function requests the SD card to do a flash erase for a
-   * range of blocks.  The data on the card after an erase operation is
-   * either 0 or 1, depends on the card vendor.  The card must support
-   * single block erase.
-   *
-   * \return The value true is returned for success and
-   * the value false is returned for failure.
-   */
-  bool erase(uint32_t firstBlock, uint32_t lastBlock) {
-    return syncBlocks() && SdioCard::erase(firstBlock, lastBlock);
+    return SdSpiCard::begin(spi, csPin, spiSettings);
   }
   /**
    * Read a 512 byte block from an SD card.
@@ -289,8 +362,7 @@ class SdioCardEX : public SdioCard {
   static const uint32_t IDLE_STATE = 0;
   static const uint32_t READ_STATE = 1;
   static const uint32_t WRITE_STATE = 2;
-  uint32_t m_curLba;
-  uint32_t m_limitLba;
+  uint32_t m_curBlock;
   uint8_t m_curState;
 };
-#endif  // SdioCard_h
+#endif  // SdSpiCard_h

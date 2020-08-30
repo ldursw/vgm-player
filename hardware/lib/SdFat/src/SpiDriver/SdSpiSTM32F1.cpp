@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #if defined(__STM32F1__)
-#include "SdSpiDriver.h"
+#include "SdSpiDriver.hpp"
 #define USE_STM32F1_DMAC 1
 //------------------------------------------------------------------------------
 static SPIClass m_SPI1(1);

@@ -23,9 +23,9 @@
  * \file
  * \brief ArduinoInStream and ArduinoOutStream classes
  */
-#include "FatLibConfig.h"
+#include "FatLibConfig.hpp"
 #if ENABLE_ARDUINO_FEATURES
-#include "bufstream.h"
+#include "bufstream.hpp"
 //==============================================================================
 /**
  * \class ArduinoInStream

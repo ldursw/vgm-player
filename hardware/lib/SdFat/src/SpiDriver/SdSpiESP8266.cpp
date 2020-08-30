@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #if defined(ESP8266)
-#include "SdSpiDriver.h"
+#include "SdSpiDriver.hpp"
 //------------------------------------------------------------------------------
 /** Initialize the SPI bus.
  *

@@ -19,10 +19,10 @@
  */
 #ifndef FatFileSystem_h
 #define FatFileSystem_h
-#include "FatVolume.h"
-#include "FatFile.h"
-#include "ArduinoStream.h"
-#include "ArduinoFiles.h"
+#include "FatVolume.hpp"
+#include "FatFile.hpp"
+#include "ArduinoStream.hpp"
+#include "ArduinoFiles.hpp"
 /**
  * \file
  * \brief FatFileSystem class
@@ -36,7 +36,7 @@ class FatFileSystem : public  FatVolume {
  public:
   /**
    * Initialize an FatFileSystem object.
-   * \param[in] blockDev Device block driver.   
+   * \param[in] blockDev Device block driver.
    * \param[in] part partition to initialize.
    * \return The value true is returned for success and
    * the value false is returned for failure.

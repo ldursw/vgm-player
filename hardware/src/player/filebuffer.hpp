@@ -5,7 +5,7 @@
 
 #define PCM_BUFFER 1536
 
-#include <SdFat.h>
+#include <SdFat.hpp>
 #include <cstdint>
 
 class FileBuffer

@@ -17,7 +17,7 @@
  * along with the Arduino SdSpiAltDriver Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "SdSpiDriver.h"
+#include "SdSpiDriver.hpp"
 #if defined(__arm__) && defined(CORE_TEENSY)
 // SPI definitions
 #include "kinetis.h"

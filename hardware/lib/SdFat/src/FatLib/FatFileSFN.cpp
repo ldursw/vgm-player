@@ -17,8 +17,8 @@
  * along with the FatLib Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "FatFile.h"
-#include "FatFileSystem.h"
+#include "FatFile.hpp"
+#include "FatFileSystem.hpp"
 //------------------------------------------------------------------------------
 bool FatFile::getSFN(char* name) {
   dir_t* dir;

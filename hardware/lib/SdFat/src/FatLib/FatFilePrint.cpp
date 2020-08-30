@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include <math.h>
-#include "FatFile.h"
-#include "FmtNumber.h"
+#include "FatFile.hpp"
+#include "FmtNumber.hpp"
 //------------------------------------------------------------------------------
 // print uint8_t with width 2
 static void print2u(print_t* pr, uint8_t v) {

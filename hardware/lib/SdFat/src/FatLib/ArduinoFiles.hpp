@@ -23,9 +23,9 @@
  */
 #ifndef ArduinoFiles_h
 #define ArduinoFiles_h
-#include "FatLibConfig.h"
+#include "FatLibConfig.hpp"
 #if ENABLE_ARDUINO_FEATURES
-#include "FatFile.h"
+#include "FatFile.hpp"
 #include <limits.h>
 //------------------------------------------------------------------------------
 /** Arduino SD.h style flag for open for read. */
@@ -159,7 +159,7 @@ class File : public FatFile, public Stream {
   /** No longer implemented due to Long File Names.
    *
    * Use getName(char* name, size_t size).
-   * \return a pointer to replacement suggestion. 
+   * \return a pointer to replacement suggestion.
    */
   const char* name() const {
     return "use getName()";

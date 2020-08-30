@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #include <string.h>
-#include "ostream.h"
+#include "ostream.hpp"
 #ifndef PSTR
 #define PSTR(x) x
 #endif

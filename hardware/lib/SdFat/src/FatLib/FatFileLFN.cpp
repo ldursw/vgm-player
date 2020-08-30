@@ -17,7 +17,7 @@
  * along with the FatLib Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "FatFile.h"
+#include "FatFile.hpp"
 //------------------------------------------------------------------------------
 //
 uint8_t FatFile::lfnChecksum(uint8_t* name) {

@@ -23,8 +23,8 @@
  * \file
  * \brief \ref fstream, \ref ifstream, and \ref ofstream classes
  */
-#include "FatFile.h"
-#include "iostream.h"
+#include "FatFile.hpp"
+#include "iostream.hpp"
 //==============================================================================
 /**
  * \class FatStreamBase

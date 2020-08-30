@@ -17,7 +17,7 @@
  * along with the Arduino SdFat Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "SdioCard.h"
+#include "SdioCard.hpp"
 
 // limit of K66 due to errata KINETIS_K_0N65N.
 const uint32_t MAX_SDHC_COUNT = 0XFFFF;

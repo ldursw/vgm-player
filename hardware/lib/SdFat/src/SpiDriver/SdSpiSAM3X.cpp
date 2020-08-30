@@ -17,7 +17,7 @@
  * along with the Arduino SdSpiAltDriver Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "SdSpiDriver.h"
+#include "SdSpiDriver.hpp"
 #if defined(__SAM3X8E__) || defined(__SAM3X8H__)
 /** Use SAM3X DMAC if nonzero */
 #define USE_SAM3X_DMAC 1

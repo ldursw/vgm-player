@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 #if defined(__MK64FX512__) || defined(__MK66FX1M0__)
-#include "SdioCard.h"
+#include "SdioCard.hpp"
 //==============================================================================
 #define SDHC_PROCTL_DTW_4BIT 0x01
 const uint32_t FIFO_WML = 16;

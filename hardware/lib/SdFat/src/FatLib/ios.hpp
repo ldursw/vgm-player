@@ -19,7 +19,7 @@
  */
 #ifndef ios_h
 #define ios_h
-#include "FatFile.h"
+#include "FatFile.hpp"
 /**
  * \file
  * \brief \ref ios_base and \ref ios classes

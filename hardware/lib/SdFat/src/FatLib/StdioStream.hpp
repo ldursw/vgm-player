@@ -24,7 +24,7 @@
  * \brief StdioStream class
  */
 #include <limits.h>
-#include "FatFile.h"
+#include "FatFile.hpp"
 //------------------------------------------------------------------------------
 /** Total size of stream buffer. The entire buffer is used for output.
   * During input UNGETC_BUF_SIZE of this space is reserved for ungetc.

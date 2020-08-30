@@ -41,7 +41,7 @@ struct GpioPinMap_t {
 #define GPIO_PIN(reg, bit) {&PIN##reg, &DDR##reg, &PORT##reg, 1 << bit}
 
 // Include pin map for current board.
-#include "boards/GpioPinMap.h"
+#include "boards/GpioPinMap.hpp"
 //------------------------------------------------------------------------------
 /** generate bad pin number error */
 void badPinNumber(void)

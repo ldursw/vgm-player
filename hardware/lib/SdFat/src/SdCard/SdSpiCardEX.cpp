@@ -17,7 +17,7 @@
  * along with the Arduino SdFat Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "SdSpiCard.h"
+#include "SdSpiCard.hpp"
 bool SdSpiCardEX::readBlock(uint32_t block, uint8_t* dst) {
   if (m_curState != READ_STATE || block != m_curBlock) {
     if (!syncBlocks()) {

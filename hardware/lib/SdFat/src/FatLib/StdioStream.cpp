@@ -17,8 +17,8 @@
  * along with the Arduino RamDisk Library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-#include "StdioStream.h"
-#include "FmtNumber.h"
+#include "StdioStream.hpp"
+#include "FmtNumber.hpp"
 //------------------------------------------------------------------------------
 int StdioStream::fclose() {
   int rtn = 0;
@@ -519,4 +519,3 @@ char* StdioStream::fmtSpace(uint8_t len) {
   m_w -= len;
   return reinterpret_cast<char*>(m_p);
 }
-

@@ -24,9 +24,9 @@
  * \brief FatVolume class
  */
 #include <stddef.h>
-#include "FatLibConfig.h"
-#include "FatStructs.h"
-#include "BlockDriver.h"
+#include "FatLibConfig.hpp"
+#include "FatStructs.hpp"
+#include "BlockDriver.hpp"
 //------------------------------------------------------------------------------
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /** Macro for debug. */
@@ -212,7 +212,7 @@ class FatVolume {
    * floppy format.
    *
    * \return The value true is returned for success and
-   * the value false is returned for failure. 
+   * the value false is returned for failure.
    */
   bool init() {
     return init(1) || init(0);

@@ -25,7 +25,7 @@
 #define FatLibConfig_h
 #include <stdint.h>
 // Allow this file to override defaults.
-#include "SdFatConfig.h"
+#include "SdFatConfig.hpp"
 
 #ifdef __AVR__
 #include <avr/io.h>
@@ -79,7 +79,7 @@
 #endif  // RAMEND
 #endif  // USE_MULTI_BLOCK_IO
 //------------------------------------------------------------------------------
-/** 
+/**
  * Set MAINTAIN_FREE_CLUSTER_COUNT nonzero to keep the count of free clusters
  * updated.  This will increase the speed of the freeClusterCount() call
  * after the first call.  Extra flash will be required.
