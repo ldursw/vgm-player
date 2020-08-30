@@ -1,9 +1,10 @@
 #include "shiftregister.hpp"
 #include <Arduino.h>
 #include <SPI.h>
+#include "util/hal.hpp"
 
 bool ShiftRegister::_setup = false;
-static SPISettings _srSpiSettings(2'000'000, MSBFIRST, SPI_MODE0);
+static SPISettings _srSpiSettings(2000000, MSBFIRST, SPI_MODE0);
 
 void ShiftRegister::setup(void)
 {

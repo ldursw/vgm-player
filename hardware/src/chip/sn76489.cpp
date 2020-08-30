@@ -1,12 +1,11 @@
 #include <Arduino.h>
 #include "sn76489.hpp"
 #include "shiftregister.hpp"
+#include "util/hal.hpp"
 
 #ifndef USE_REAL_PSG
 #include "psgEmu.hpp"
 #endif
-
-#define PSG_WE 29
 
 void Sn76489::setup(void)
 {
@@ -15,7 +14,7 @@ void Sn76489::setup(void)
     pinMode(PSG_WE, OUTPUT);
 #else
     EmulatedPsg::reset();
-    pinMode(A21, OUTPUT);
+    pinMode(PSG_DAC, OUTPUT);
 #endif
 
     // silence PSG

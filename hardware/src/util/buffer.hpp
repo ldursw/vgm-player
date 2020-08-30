@@ -1,9 +1,6 @@
 #ifndef INC_BUFFER
 #define INC_BUFFER
 
-#include <cstdio>
-#include <memory>
-
 // https://github.com/embeddedartistry/embedded-resources/blob/master/examples/cpp/circular_buffer.cpp
 template <class T, size_t N>
 class CircularBuffer

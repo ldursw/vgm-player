@@ -1,11 +1,7 @@
 #include "ym2612.hpp"
 #include "shiftregister.hpp"
 #include <Arduino.h>
-
-#define FM_IC 28
-#define FM_WR 27
-#define FM_A0 26
-#define FM_A1 25
+#include "util/hal.hpp"
 
 void Ym2612::setup(void)
 {

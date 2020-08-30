@@ -1,13 +1,14 @@
 #include "dispatcher.hpp"
+#include "timer.hpp"
 #include "chip/sn76489.hpp"
 #include "chip/ym2612.hpp"
 #include "clock/clock.hpp"
 #include "player/vgmplayer.hpp"
 #include "player/vgmstate.hpp"
 #include "player/vgmcommands.hpp"
+#include "util/hal.hpp"
 
-CircularBuffer<Instruction, DISPATCHER_BUFFER_SIZE> Dispatcher::_buffer;
-IntervalTimer Dispatcher::_timer;
+CircularBuffer<Instruction, Dispatcher::BufferSize> Dispatcher::_buffer;
 
 void Dispatcher::enqueue(Instruction instruction)
 {
@@ -29,11 +30,7 @@ void Dispatcher::setup(void)
     ChipClock::setup();
     Sn76489::setup();
     Ym2612::setup();
-
-    // Start timer with 44.1 kHz frequency.
-    // That gives us ~22.675737us per interrupt
-    // or ~4081 cycles at 180 MHz.
-    _timer.begin(process, (1.0 / 44100.0) * 1'000'000UL);
+    Timer::begin(process);
 }
 
 void Dispatcher::process(void)

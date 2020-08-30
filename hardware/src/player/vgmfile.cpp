@@ -6,8 +6,9 @@
 #include "vgmfile.hpp"
 #include "vgmcommands.hpp"
 #include "vgmstate.hpp"
+#include "util/hal.hpp"
 
-static SdFatSdio SD;
+static SdFatCls SD;
 static File file;
 static File pcmFile;
 

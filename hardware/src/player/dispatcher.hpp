@@ -5,8 +5,6 @@
 #include <Arduino.h>
 #include "../util/buffer.hpp"
 
-#define DISPATCHER_BUFFER_SIZE 16
-
 class InstructionType
 {
 public:
@@ -61,8 +59,8 @@ public:
 private:
     static bool processItem(Instruction item);
 
-    static CircularBuffer<Instruction, DISPATCHER_BUFFER_SIZE> _buffer;
-    static IntervalTimer _timer;
+    static constexpr size_t BufferSize = 16;
+    static CircularBuffer<Instruction, BufferSize> _buffer;
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "player/dispatcher.hpp"
+#include "util/hal.hpp"
 
 #if defined(ENABLE_PLAYER) && defined(ENABLE_STREAM)
 #error Player and Stream cannot be activated at the same time
@@ -41,8 +42,6 @@ void loop(void)
     {
         return;
     }
-
-    Serial.rts();
 
     char buf[3];
     uint8_t index = 0;
