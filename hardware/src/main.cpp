@@ -22,6 +22,7 @@ void setup(void)
 
 #ifdef ENABLE_STREAM
     SerialUSB.begin(115200);
+    while (!SerialUSB);
 #endif
 
 #ifdef ENABLE_PLAYER
