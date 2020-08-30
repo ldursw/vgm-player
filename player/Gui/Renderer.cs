@@ -187,8 +187,8 @@ namespace VgmReader.Gui
             DrawPcm(renderer, 10, 130);
             DrawFmMeter(renderer, 40, 10);
 
-            // DrawPsgRegisters(renderer);
-            // DrawFmRegisters(renderer);
+            // DrawPsgRegisters(renderer, 200, 160);
+            // DrawFmRegisters(renderer, 140, 200);
 
             VgmState.FmState.Update();
         }
@@ -250,28 +250,28 @@ namespace VgmReader.Gui
             SDL_RenderFillRect(renderer, ref rect);
         }
 
-        private static void DrawPsgRegisters(IntPtr renderer)
+        private static void DrawPsgRegisters(IntPtr renderer, int ax, int ay)
         {
-            Font.Render(renderer, "PSG   T1   T2   T3   NS", 200, 10, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[0].InternalTone, 280, 30, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[0].InternalVolume, 296, 46, 0xffffff);
+            Font.Render(renderer, "PSG   T1   T2   T3   NS", ax, ay, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[0].InternalTone, ax + 80, ay + 20, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[0].InternalVolume, ax + 96, ay + 36, 0xffffff);
 
-            Font.Render(renderer, VgmState.PsgState[1].InternalTone, 360, 30, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[1].InternalVolume, 376, 46, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[1].InternalTone, ax + 160, ay + 20, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[1].InternalVolume, ax + 176, ay + 36, 0xffffff);
 
-            Font.Render(renderer, VgmState.PsgState[2].InternalTone, 440, 30, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[2].InternalVolume, 456, 46, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[2].InternalTone, ax + 240, ay + 20, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[2].InternalVolume, ax + 256, ay + 36, 0xffffff);
 
-            Font.Render(renderer, (byte)VgmState.PsgState[3].InternalTone, 536, 30, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[3].InternalVolume, 536, 46, 0xffffff);
+            Font.Render(renderer, (byte)VgmState.PsgState[3].InternalTone, ax + 336, ay + 20, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[3].InternalVolume, ax + 336, ay + 36, 0xffffff);
         }
 
-        private static void DrawFmRegisters(IntPtr renderer)
+        private static void DrawFmRegisters(IntPtr renderer, int ax, int ay)
         {
             for (var i = 0x22; i <= 0x2b; i++)
             {
-                var y = 70 + (16 * (i / 16));
-                var x = 200 + (i % 16 * 32);
+                var y = ay + (16 * (i / 16));
+                var x = ax + (i % 16 * 32);
 
                 Font.Render(renderer, VgmState.FmMap[i], x, y,
                     (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
@@ -279,8 +279,8 @@ namespace VgmReader.Gui
 
             for (var i = 0x31; i <= 0xb6; i++)
             {
-                var y = 70 + (16 * (i / 16));
-                var x = 200 + (i % 16 * 32);
+                var y = ay + (16 * (i / 16));
+                var x = ax + (i % 16 * 32);
 
                 Font.Render(renderer, VgmState.FmMap[i], x, y,
                     (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
@@ -288,8 +288,8 @@ namespace VgmReader.Gui
 
             for (var i = 0x131; i <= 0x1b6; i++)
             {
-                var y = 70 + (16 * (i / 16));
-                var x = 200 + (i % 16 * 32);
+                var y = ay + 208 + (16 * ((i - 0x131) / 16));
+                var x = ax + (i % 16 * 32);
 
                 Font.Render(renderer, VgmState.FmMap[i], x, y,
                     (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
