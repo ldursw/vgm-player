@@ -29,10 +29,10 @@ an emulated PSG is used instead of the discrete SN76489. It is
 [widely known](https://www.smspower.org/Development/SN76489#TheLinearFeedbackShiftRegister)
 that the Sega version has some differences mainly in the noise channel.
 
-For example, most games get a [weird artifact](assets/panicpuppet-discrete.ogg) instead
-of the [expected noise channel](assets/panicpuppet-emulated.ogg).
-After Burner II has a constant tone on a [discrete chip](assets/afterburner-discrete.ogg)
-whereas [on emulation](assets/afterburner-emulated.ogg) it sounds right.
+For example, most games get a [weird artifact](https://output.jsbin.com/niwohilezo) instead
+of the [expected noise channel](https://output.jsbin.com/robedigulo).
+After Burner II has a constant tone on a [discrete chip](https://output.jsbin.com/lidamemiti)
+whereas [on emulation](https://output.jsbin.com/vixenimoge) it sounds right.
 
 When using an emulated PSG the Teensy board will emulate the chip and the output is
 sent to the `DAC0` pin at 44.1 kHz.
