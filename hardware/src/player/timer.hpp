@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #ifndef INC_PLAYER_TIMER
 #define INC_PLAYER_TIMER
 

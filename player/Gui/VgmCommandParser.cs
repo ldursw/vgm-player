@@ -1,4 +1,5 @@
-﻿using System;
+﻿// SPDX-License-Identifier: GPL-3.0
+using System;
 
 namespace VgmReader.Gui
 {

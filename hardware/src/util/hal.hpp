@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #ifndef INC_UTIL_HAL
 #define INC_UTIL_HAL
 

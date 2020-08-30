@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #include "shiftregister.hpp"
 #include <Arduino.h>
 #include <SPI.h>

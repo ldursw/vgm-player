@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #ifndef INC_CHIP_COMMON
 #define INC_CHIP_COMMON
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿// SPDX-License-Identifier: GPL-3.0
+using System;
 using VgmPlayer.Gui;
 using VgmPlayer.Gui.Elements;
 using VgmReader.Outputs;

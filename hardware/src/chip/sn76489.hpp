@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #ifndef INC_CHIP_SN76489
 #define INC_CHIP_SN76489
 

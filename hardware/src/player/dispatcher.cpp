@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #include "dispatcher.hpp"
 #include "timer.hpp"
 #include "chip/sn76489.hpp"

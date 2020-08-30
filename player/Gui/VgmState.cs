@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿// SPDX-License-Identifier: GPL-3.0
+using System.Collections.Concurrent;
 using VgmPlayer.Structs;
 
 namespace VgmReader.Gui

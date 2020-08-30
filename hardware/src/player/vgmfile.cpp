@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #ifdef ENABLE_PLAYER
 
 #include <SdFat.hpp>

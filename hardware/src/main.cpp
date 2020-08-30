@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #include <Arduino.h>
 #include "player/dispatcher.hpp"
 #include "util/hal.hpp"

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #ifndef INC_CHIP_YM2612
 #define INC_CHIP_YM2612
 

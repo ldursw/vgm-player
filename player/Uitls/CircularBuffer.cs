@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿// SPDX-License-Identifier: GPL-3.0
+using System.Threading;
 
 namespace VgmReader.Utils
 {

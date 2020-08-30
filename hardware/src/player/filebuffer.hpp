@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #ifndef INC_FILEBUFFER
 #define INC_FILEBUFFER
 

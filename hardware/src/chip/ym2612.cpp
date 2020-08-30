@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0
 #include "ym2612.hpp"
 #include "shiftregister.hpp"
 #include <Arduino.h>
