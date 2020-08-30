@@ -30,7 +30,8 @@ namespace VgmReader.Gui
                 SDL_WINDOWPOS_CENTERED,
                 800,
                 600,
-                SDL_WindowFlags.SDL_WINDOW_VULKAN
+                SDL_WindowFlags.SDL_WINDOW_VULKAN |
+                SDL_WindowFlags.SDL_WINDOW_RESIZABLE
             );
 
             renderer = SDL_CreateRenderer(
