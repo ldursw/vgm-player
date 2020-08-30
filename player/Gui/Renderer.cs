@@ -187,8 +187,8 @@ namespace VgmReader.Gui
             DrawPcm(renderer, 10, 130);
             DrawFmMeter(renderer, 40, 10);
 
-            DrawPsgRegisters(renderer);
-            DrawFmRegisters(renderer);
+            // DrawPsgRegisters(renderer);
+            // DrawFmRegisters(renderer);
 
             VgmState.FmState.Update();
         }
