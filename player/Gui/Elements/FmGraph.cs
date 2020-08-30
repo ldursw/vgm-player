@@ -111,7 +111,8 @@ namespace VgmPlayer.Gui.Elements
             var backH = Map(backHeight, 0, 0x1fff);
             var valH = maxH == 0 ? 0 : Map(maxH, 0, 0x1fff);
 
-            Rect.DrawRectangle(renderer, x, y + backH, width, height - backH, backColor);
+            Rect.DrawRectangle(renderer, x, y + backH, width,
+                height - backH - (height - valH), backColor);
             Rect.DrawRectangle(renderer, x, y + valH, width, height - valH, valueColor);
         }
 
