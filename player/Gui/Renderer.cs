@@ -183,9 +183,9 @@ namespace VgmReader.Gui
 
         private static void RenderWindow(IntPtr renderer)
         {
-            DrawPsgMeter(renderer, 10, 10);
-            DrawPcm(renderer, 10, 130);
             DrawFmMeter(renderer, 40, 10);
+            DrawPcm(renderer, 450, 10);
+            DrawPsgMeter(renderer, 640, 10);
 
             // DrawPsgRegisters(renderer, 200, 160);
             // DrawFmRegisters(renderer, 140, 200);
