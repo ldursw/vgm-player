@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using VgmPlayer.Gui;
 using VgmPlayer.Gui.Elements;
-using VgmPlayer.Structs;
-using VgmReader.Devices;
 using VgmReader.Outputs;
 using static SDL2.SDL;
 
@@ -16,12 +13,7 @@ namespace VgmReader.Gui
         private static uint lastRenderTime = 0;
         private static IntPtr window;
         private static IntPtr renderer;
-        private static SDL_AudioSpec audioSpec;
-        private static uint audioDev;
         private static readonly IGuiElement[] elements;
-
-        // private static Sn76489 _sn76489;
-        // private static byte _lastSample = 127;
 
         static Renderer()
         {
@@ -60,19 +52,7 @@ namespace VgmReader.Gui
             SDL_RenderSetLogicalSize(renderer, 800, 600);
 
             Font.Initialize(renderer);
-
-            audioSpec = new SDL_AudioSpec()
-            {
-                freq = 44100,
-                format = AUDIO_S16,
-                channels = 1,
-                samples = 1,
-                callback = OnAudioTick,
-            };
-            audioDev = SDL_OpenAudioDevice(null, 0, ref audioSpec, out var _, 0);
-            SDL_PauseAudioDevice(audioDev, 0);
-
-            // _sn76489 = new Sn76489();
+            AudioQueue.Initialize();
         }
 
         public static bool Loop()
@@ -97,85 +77,6 @@ namespace VgmReader.Gui
             SleepRenderer();
 
             return true;
-        }
-
-        private static void OnAudioTick(IntPtr userdata, IntPtr stream, int len)
-        {
-            var stop = false;
-            var gotPcm = false;
-
-            while (stop || !VgmState.Commands.IsEmpty)
-            {
-                if (VgmState.WaitSamples > 0)
-                {
-                    VgmState.WaitSamples--;
-
-                    break;
-                }
-
-                if (!VgmState.Commands.TryDequeue(out var item))
-                {
-                    break;
-                }
-
-                switch (item.Type)
-                {
-                    case InstructionType.PsgWrite:
-                        VgmCommandParser.ParsePsg(item.Data1);
-                        // _sn76489.Write(item.Data1);
-                        stop = true;
-                        break;
-                    case InstructionType.FmWrite0:
-                        VgmCommandParser.ParseFm(0, item.Data1, item.Data2);
-                        stop = true;
-                        break;
-                    case InstructionType.FmWrite1:
-                        VgmCommandParser.ParseFm(1, item.Data1, item.Data2);
-                        stop = true;
-                        break;
-                    case InstructionType.WaitSample:
-                        VgmState.WaitSamples = (item.Data2 << 8) | item.Data1;
-
-                        if (VgmState.WaitSamples <= 0)
-                        {
-                            stop = true;
-                        }
-
-                        break;
-                    case InstructionType.End:
-                    case InstructionType.ResetImmediate:
-                        VgmCommandParser.Reset();
-                        stop = true;
-                        break;
-                    case InstructionType.FmSample: // fm write pcm
-                        VgmCommandParser.ParseFm(0, 0x2a, item.Data1);
-                        VgmState.WaitSamples = item.Data2;
-                        // _lastSample = item.Data1;
-                        gotPcm = true;
-
-                        if (VgmState.WaitSamples <= 0)
-                        {
-                            stop = true;
-                        }
-
-                        break;
-                }
-            }
-
-            if (!gotPcm)
-            {
-                // Move values 1 sample to the left
-                Array.Copy(VgmState.PcmSamples, 1, VgmState.PcmSamples, 0,
-                    VgmState.PcmSamples.Length - 1);
-
-                // Copy last sample
-                VgmState.PcmSamples[^1] = VgmState.PcmSamples[^2];
-            }
-
-            // var sample = (short)_sn76489.GetSample();
-            // sample += (short)((_lastSample - 127) * 128);
-            // Marshal.WriteInt16(stream, 0, sample);
-            Marshal.WriteInt16(stream, 0, 0);
         }
 
         private static void SleepRenderer()
