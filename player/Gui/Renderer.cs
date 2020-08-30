@@ -183,15 +183,19 @@ namespace VgmReader.Gui
 
         private static void RenderWindow(IntPtr renderer)
         {
-            DrawPsgMeter(renderer, 10, 10, VgmState.PsgState[0]);
-            DrawPsgMeter(renderer, 35, 10, VgmState.PsgState[1]);
-            DrawPsgMeter(renderer, 60, 10, VgmState.PsgState[2]);
-            DrawPsgMeter(renderer, 85, 10, VgmState.PsgState[3]);
-
+            DrawPsgMeter(renderer, 10, 10);
             DrawPcm(renderer, 10, 130);
 
             DrawPsgRegisters(renderer);
             DrawFmRegisters(renderer);
+        }
+
+        private static void DrawPsgMeter(IntPtr renderer, int x, int y)
+        {
+            DrawPsgMeter(renderer, x, y, VgmState.PsgState[0]);
+            DrawPsgMeter(renderer, x + 25, y, VgmState.PsgState[1]);
+            DrawPsgMeter(renderer, x + 50, y, VgmState.PsgState[2]);
+            DrawPsgMeter(renderer, x + 75, y, VgmState.PsgState[3]);
         }
 
         private static void DrawPsgMeter(IntPtr renderer, int x, int y, PsgState state)
