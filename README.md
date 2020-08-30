@@ -77,3 +77,6 @@ Thank you very much for all these awesome people
 - Softdev, Eke-Eke - [Genesis Plus GX emulator](https://github.com/ekeeke/Genesis-Plus-GX)
 - Ace, Villahed94 - [Mega Amp](https://www.sega-16.com/forum/showthread.php?26568-Introducing-the-Mega-Amp-The-universal-Genesis-audio-circuit)
 - Stephane-D - [XGM Tool and XGM Player](https://github.com/Stephane-D/SGDK/tree/master/sample/xgmplayer)
+- SDL Community - [SDL](https://www.libsdl.org/)
+- greiman - [SdFat library](https://github.com/greiman/SdFat)
+- ivanseidel - [DueTimer library](https://github.com/ivanseidel/DueTimer)
