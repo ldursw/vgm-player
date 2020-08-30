@@ -76,6 +76,8 @@ namespace VgmReader.Inputs
                 }
 
                 server.Dispose();
+
+                _queue.Add(VgmInstruction.ResetImmediate());
             }
         }
 
