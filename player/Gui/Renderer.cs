@@ -190,45 +190,8 @@ namespace VgmReader.Gui
 
             DrawPcm(renderer, 10, 130);
 
-            Font.Render(renderer, "PSG   T1   T2   T3   NS", 200, 10, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[0].InternalTone, 280, 30, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[0].InternalVolume, 296, 46, 0xffffff);
-
-            Font.Render(renderer, VgmState.PsgState[1].InternalTone, 360, 30, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[1].InternalVolume, 376, 46, 0xffffff);
-
-            Font.Render(renderer, VgmState.PsgState[2].InternalTone, 440, 30, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[2].InternalVolume, 456, 46, 0xffffff);
-
-            Font.Render(renderer, (byte)VgmState.PsgState[3].InternalTone, 536, 30, 0xffffff);
-            Font.Render(renderer, VgmState.PsgState[3].InternalVolume, 536, 46, 0xffffff);
-
-            for (var i = 0x22; i <= 0x2b; i++)
-            {
-                var y = 70 + (16 * (i / 16));
-                var x = 200 + (i % 16 * 32);
-
-                Font.Render(renderer, VgmState.FmMap[i], x, y,
-                    (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
-            }
-
-            for (var i = 0x31; i <= 0xb6; i++)
-            {
-                var y = 70 + (16 * (i / 16));
-                var x = 200 + (i % 16 * 32);
-
-                Font.Render(renderer, VgmState.FmMap[i], x, y,
-                    (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
-            }
-
-            for (var i = 0x131; i <= 0x1b6; i++)
-            {
-                var y = 70 + (16 * (i / 16));
-                var x = 200 + (i % 16 * 32);
-
-                Font.Render(renderer, VgmState.FmMap[i], x, y,
-                    (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
-            }
+            DrawPsgRegisters(renderer);
+            DrawFmRegisters(renderer);
         }
 
         private static void DrawPsgMeter(IntPtr renderer, int x, int y, PsgState state)
@@ -278,6 +241,52 @@ namespace VgmReader.Gui
 
             var rect = new SDL_Rect() { x = x, y = y, w = w, h = h };
             SDL_RenderFillRect(renderer, ref rect);
+        }
+
+        private static void DrawPsgRegisters(IntPtr renderer)
+        {
+            Font.Render(renderer, "PSG   T1   T2   T3   NS", 200, 10, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[0].InternalTone, 280, 30, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[0].InternalVolume, 296, 46, 0xffffff);
+
+            Font.Render(renderer, VgmState.PsgState[1].InternalTone, 360, 30, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[1].InternalVolume, 376, 46, 0xffffff);
+
+            Font.Render(renderer, VgmState.PsgState[2].InternalTone, 440, 30, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[2].InternalVolume, 456, 46, 0xffffff);
+
+            Font.Render(renderer, (byte)VgmState.PsgState[3].InternalTone, 536, 30, 0xffffff);
+            Font.Render(renderer, VgmState.PsgState[3].InternalVolume, 536, 46, 0xffffff);
+        }
+
+        private static void DrawFmRegisters(IntPtr renderer)
+        {
+            for (var i = 0x22; i <= 0x2b; i++)
+            {
+                var y = 70 + (16 * (i / 16));
+                var x = 200 + (i % 16 * 32);
+
+                Font.Render(renderer, VgmState.FmMap[i], x, y,
+                    (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
+            }
+
+            for (var i = 0x31; i <= 0xb6; i++)
+            {
+                var y = 70 + (16 * (i / 16));
+                var x = 200 + (i % 16 * 32);
+
+                Font.Render(renderer, VgmState.FmMap[i], x, y,
+                    (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
+            }
+
+            for (var i = 0x131; i <= 0x1b6; i++)
+            {
+                var y = 70 + (16 * (i / 16));
+                var x = 200 + (i % 16 * 32);
+
+                Font.Render(renderer, VgmState.FmMap[i], x, y,
+                    (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
+            }
         }
     }
 }
