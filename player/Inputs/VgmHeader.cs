@@ -1,7 +1,7 @@
 ﻿// SPDX-License-Identifier: GPL-3.0
 using System.IO;
 
-namespace VgmReader.Inputs
+namespace VgmPlayer.Inputs
 {
     class VgmHeader
     {

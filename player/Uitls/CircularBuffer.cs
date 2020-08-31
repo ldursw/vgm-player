@@ -1,7 +1,7 @@
 ﻿// SPDX-License-Identifier: GPL-3.0
 using System.Threading;
 
-namespace VgmReader.Utils
+namespace VgmPlayer.Utils
 {
     class CircularBuffer<T>
     {

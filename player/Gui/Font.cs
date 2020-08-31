@@ -2,7 +2,7 @@
 using System;
 using static SDL2.SDL;
 
-namespace VgmReader.Gui
+namespace VgmPlayer.Gui
 {
     class Font
     {

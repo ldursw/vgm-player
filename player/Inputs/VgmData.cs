@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using VgmPlayer.Structs;
 
-namespace VgmReader.Inputs
+namespace VgmPlayer.Inputs
 {
     class VgmData
     {

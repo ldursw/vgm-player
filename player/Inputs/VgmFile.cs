@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using VgmPlayer.Structs;
 
-namespace VgmReader.Inputs
+namespace VgmPlayer.Inputs
 {
     class VgmFile : IVgmInput
     {

@@ -1,7 +1,7 @@
 ﻿// SPDX-License-Identifier: GPL-3.0
 using System;
 
-namespace VgmReader.Gui
+namespace VgmPlayer.Gui
 {
     class VgmCommandParser
     {

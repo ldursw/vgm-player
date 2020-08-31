@@ -1,9 +1,9 @@
 ﻿// SPDX-License-Identifier: GPL-3.0
-using VgmReader.Gui;
-using VgmReader.Inputs;
-using VgmReader.Outputs;
+using VgmPlayer.Gui;
+using VgmPlayer.Inputs;
+using VgmPlayer.Outputs;
 
-namespace VgmReader
+namespace VgmPlayer
 {
     class Program
     {

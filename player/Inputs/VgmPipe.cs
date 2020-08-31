@@ -7,9 +7,9 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 using VgmPlayer.Structs;
-using VgmReader.Utils;
+using VgmPlayer.Utils;
 
-namespace VgmReader.Inputs
+namespace VgmPlayer.Inputs
 {
     class VgmPipe : IVgmInput
     {

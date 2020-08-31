@@ -7,10 +7,10 @@ using System.Threading;
 using Microsoft.Win32.SafeHandles;
 using VgmPlayer.Structs;
 using VgmPlayer.Uitls;
-using VgmReader.Gui;
-using VgmReader.Inputs;
+using VgmPlayer.Gui;
+using VgmPlayer.Inputs;
 
-namespace VgmReader.Outputs
+namespace VgmPlayer.Outputs
 {
     class VgmSerial
     {

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using VgmPlayer.Structs;
 
-namespace VgmReader.Inputs
+namespace VgmPlayer.Inputs
 {
     interface IVgmInput : IDisposable
     {

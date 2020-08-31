@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using VgmPlayer.Structs;
 
-namespace VgmReader.Gui
+namespace VgmPlayer.Gui
 {
     class VgmState
     {

@@ -1,5 +1,5 @@
 ﻿// SPDX-License-Identifier: GPL-3.0
-namespace VgmReader.Devices
+namespace VgmPlayer.Devices
 {
     // Ported from VGMPlay
     class Sn76489

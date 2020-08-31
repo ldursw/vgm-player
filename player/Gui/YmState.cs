@@ -1,5 +1,5 @@
 ﻿// SPDX-License-Identifier: GPL-3.0
-namespace VgmReader.Gui
+namespace VgmPlayer.Gui
 {
     // Ported from XGM Player - SGDK
     class YmState

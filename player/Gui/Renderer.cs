@@ -2,10 +2,10 @@
 using System;
 using VgmPlayer.Gui;
 using VgmPlayer.Gui.Elements;
-using VgmReader.Outputs;
+using VgmPlayer.Outputs;
 using static SDL2.SDL;
 
-namespace VgmReader.Gui
+namespace VgmPlayer.Gui
 {
     class Renderer
     {
