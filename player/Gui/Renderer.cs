@@ -1,6 +1,5 @@
 ﻿// SPDX-License-Identifier: GPL-3.0
 using System;
-using VgmPlayer.Gui;
 using VgmPlayer.Gui.Elements;
 using VgmPlayer.Outputs;
 using static SDL2.SDL;
@@ -9,16 +8,16 @@ namespace VgmPlayer.Gui
 {
     class Renderer
     {
-        private const double FrameTime = 1000 / 60;
+        private const uint FrameTime = 1000 / 60;
 
-        private static uint lastRenderTime = 0;
-        private static IntPtr window;
-        private static IntPtr renderer;
-        private static readonly IGuiElement[] elements;
+        private static uint _lastRenderTime;
+        private static IntPtr _window;
+        private static IntPtr _renderer;
+        private static readonly IGuiElement[] _elements;
 
         static Renderer()
         {
-            elements = new IGuiElement[]
+            _elements = new IGuiElement[]
             {
                 new FmGraph(40, 10),
                 new PcmGraph(450, 10),
@@ -32,7 +31,7 @@ namespace VgmPlayer.Gui
         {
             SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
-            window = SDL_CreateWindow(
+            _window = SDL_CreateWindow(
                 "VGM Player",
                 SDL_WINDOWPOS_CENTERED,
                 SDL_WINDOWPOS_CENTERED,
@@ -42,17 +41,17 @@ namespace VgmPlayer.Gui
                 SDL_WindowFlags.SDL_WINDOW_RESIZABLE
             );
 
-            renderer = SDL_CreateRenderer(
-                window,
+            _renderer = SDL_CreateRenderer(
+                _window,
                 -1,
                 SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC |
                 SDL_RendererFlags.SDL_RENDERER_ACCELERATED
             );
 
             SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-            SDL_RenderSetLogicalSize(renderer, 800, 600);
+            SDL_RenderSetLogicalSize(_renderer, 800, 600);
 
-            Font.Initialize(renderer);
+            Font.Initialize(_renderer);
             AudioQueue.Initialize();
         }
 
@@ -68,12 +67,12 @@ namespace VgmPlayer.Gui
                 }
             }
 
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderClear(renderer);
+            SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);
+            SDL_RenderClear(_renderer);
 
-            RenderWindow(renderer);
+            RenderWindow();
 
-            SDL_RenderPresent(renderer);
+            SDL_RenderPresent(_renderer);
 
             SleepRenderer();
 
@@ -83,27 +82,27 @@ namespace VgmPlayer.Gui
         private static void SleepRenderer()
         {
             // First run, set the current time.
-            if (lastRenderTime == 0)
+            if (_lastRenderTime == 0)
             {
-                lastRenderTime = SDL_GetTicks();
+                _lastRenderTime = SDL_GetTicks();
             }
 
             // If the frame renders too fast, add a delay to
             // cap the framerate at SCREEN_FRAMERATE.
-            var elapsedTime = SDL_GetTicks() - lastRenderTime;
+            var elapsedTime = SDL_GetTicks() - _lastRenderTime;
             if (elapsedTime < FrameTime)
             {
-                SDL_Delay((uint)(FrameTime - elapsedTime));
+                SDL_Delay(FrameTime - elapsedTime);
             }
 
-            lastRenderTime = SDL_GetTicks();
+            _lastRenderTime = SDL_GetTicks();
         }
 
-        private static void RenderWindow(IntPtr renderer)
+        private static void RenderWindow()
         {
-            foreach (var element in elements)
+            foreach (var element in _elements)
             {
-                element.Draw(renderer);
+                element.Draw(_renderer);
             }
         }
     }
