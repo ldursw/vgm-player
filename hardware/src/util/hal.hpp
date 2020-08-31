@@ -7,6 +7,7 @@
 #define SdFatCls SdFat
 #define digitalWriteFast digitalWrite
 #define analogWriteDAC0(value) analogWrite(DAC0, value)
+#define WAIT_SERIAL() while (!SerialUSB)
 #define PSG_WE 29
 #define PSG_DAC DAC0
 #define FM_IC 28
@@ -18,6 +19,7 @@
 
 #define SdFatCls SdFatSdio
 #define SerialUSB Serial
+#define WAIT_SERIAL()
 #define PSG_WE 29
 #define PSG_DAC A21
 #define FM_IC 28
