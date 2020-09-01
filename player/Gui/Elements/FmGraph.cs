@@ -1,6 +1,5 @@
 ﻿// SPDX-License-Identifier: GPL-3.0
 using System;
-using VgmPlayer.Gui;
 
 namespace VgmPlayer.Gui.Elements
 {

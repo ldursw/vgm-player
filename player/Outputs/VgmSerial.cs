@@ -5,10 +5,10 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
-using VgmPlayer.Structs;
-using VgmPlayer.Uitls;
 using VgmPlayer.Gui;
 using VgmPlayer.Inputs;
+using VgmPlayer.Structs;
+using VgmPlayer.Uitls;
 
 namespace VgmPlayer.Outputs
 {

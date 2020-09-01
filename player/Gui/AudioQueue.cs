@@ -2,7 +2,6 @@
 using System;
 using System.Runtime.InteropServices;
 using VgmPlayer.Structs;
-using VgmPlayer.Gui;
 using static SDL2.SDL;
 
 namespace VgmPlayer.Gui
