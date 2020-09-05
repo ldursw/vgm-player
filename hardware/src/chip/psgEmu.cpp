@@ -2,17 +2,17 @@
 #include "psgEmu.hpp"
 
 float EmulatedPsg::_clock;
-int EmulatedPsg::_clocksForSample;
-int EmulatedPsg::_registers[8];
-int EmulatedPsg::_latchedRegister;
-int EmulatedPsg::_noiseShiftRegister;
-int EmulatedPsg::_noiseFreq;
-int EmulatedPsg::_toneFreqVals[4];
-int EmulatedPsg::_toneFreqPos[4];
-int EmulatedPsg::_channels[4];
+int32_t EmulatedPsg::_clocksForSample;
+int32_t EmulatedPsg::_registers[8];
+int32_t EmulatedPsg::_latchedRegister;
+int32_t EmulatedPsg::_noiseShiftRegister;
+int32_t EmulatedPsg::_noiseFreq;
+int32_t EmulatedPsg::_toneFreqVals[4];
+int32_t EmulatedPsg::_toneFreqPos[4];
+int32_t EmulatedPsg::_channels[4];
 float EmulatedPsg::_intermediatePos[4];
 bool EmulatedPsg::_antiAliasing[4];
-const int EmulatedPsg::VolumeValues[16] =
+const int32_t EmulatedPsg::VolumeValues[16] =
 {
     // These values are taken from a real SMS2's output
     // I can't remember why 892... :P some scaling I did at some point
@@ -109,7 +109,7 @@ int32_t EmulatedPsg::getSample(void)
 
 void EmulatedPsg::calculateToneChannel(void)
 {
-    for (int i = 0; i <= 2; ++i)
+    for (uint8_t i = 0; i <= 2; ++i)
     {
         if (_antiAliasing[i])
         {
@@ -219,7 +219,7 @@ void EmulatedPsg::updateNoiseChannel(void)
     if (_toneFreqPos[3] == 1)
     {
         // On the positive edge of the square wave (only once per cycle)
-        int feedback;
+        int32_t feedback;
         if ((_registers[6] & 0x4) > 0)
         {
             // White noise */

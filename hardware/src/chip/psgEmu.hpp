@@ -21,33 +21,33 @@ private:
     static void updateNoiseChannel(void);
 
     // Initial state of shift register
-    static constexpr int NoiseInitialState = 0x8000;
+    static constexpr int32_t NoiseInitialState = 0x8000;
     // Value below which PSG does not output
-    static constexpr int Cutoff = 0x6;
+    static constexpr int32_t Cutoff = 0x6;
     // Sample clock
     static constexpr float SampleClock = 3579545.0f / 16.0f / 44100.0f;
     // Volume values
-    static const int VolumeValues[16];
+    static const int32_t VolumeValues[16];
 
     // Clock ticks
     static float _clock;
-    static int _clocksForSample;
+    static int32_t _clocksForSample;
 
     // PSG registers:
     // Tone, vol x4
-    static int _registers[8];
-    static int _latchedRegister;
-    static int _noiseShiftRegister;
+    static int32_t _registers[8];
+    static int32_t _latchedRegister;
+    static int32_t _noiseShiftRegister;
     // Noise channel signal generator frequency
-    static int _noiseFreq;
+    static int32_t _noiseFreq;
 
     // Output calculation variables
     // Frequency register values (counters)
-    static int _toneFreqVals[4];
+    static int32_t _toneFreqVals[4];
     // Frequency channel flip-flops
-    static int _toneFreqPos[4];
+    static int32_t _toneFreqPos[4];
     // Value of each channel, before stereo is applied
-    static int _channels[4];
+    static int32_t _channels[4];
     // intermediate values used at boundaries between + and -
     // (does not need double accuracy)
     static float _intermediatePos[4];
