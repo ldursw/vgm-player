@@ -13,6 +13,8 @@ the Teensy 3.6 board.
 - Integration with emulators available
 - Supports emulated and discrete SN76489
 - Uses the Mega Amp circuit for amplification
+- Hardware support for Teensy 3.6 and Arduino Due (experimental)
+- Player support for Windows and Linux (experimental)
 
 ## Demo
 - [Instruction streaming from PC](https://www.youtube.com/watch?v=saAEF2lk2_Y)
@@ -34,12 +36,12 @@ of the [expected noise channel](https://output.jsbin.com/robedigulo).
 After Burner II has a constant tone on a [discrete chip](https://output.jsbin.com/lidamemiti)
 whereas [on emulation](https://output.jsbin.com/vixenimoge) it sounds right.
 
-When using an emulated PSG the Teensy board will emulate the chip and the output is
+When using an emulated PSG the microcontroller will emulate the chip and the output is
 sent to the `DAC0` pin at 44.1 kHz.
 
 If you want to use a discrete PSG anyway, all you have to do is uncomment `-DUSE_REAL_PSG`
 on `hardware/platformio.ini`, connect the `D0..D7` lines from the shift register to the
-SN76489 and connect `/WE` to pin 29 on the Teensy though a voltage converter.
+SN76489 and connect `/WE` to pin 29 though a voltage converter.
 
 ### Remote control
 
@@ -53,15 +55,13 @@ such as emulators. `VgmPCM` streams 44.1 kHz signed 8-bit mono PCM files to the 
 
 ## Compiling and Running the project
 
-To compile the Teensy code you will need [PlatformIO](https://platformio.org/). You can
-use the CLI or an IDE with extension support such as Visual Studio Code. After installing
-PlatformIO just open the `hardware` directory and upload the code to the board.
+To compile the code for the hardware you will need [PlatformIO](https://platformio.org/).
+You can use the CLI or an IDE with extension support such as Visual Studio Code. After
+installing PlatformIO just open the `hardware` directory and upload the code to the board.
 
 To compile the player application you will need the
 [.NET Core SDK](https://dotnet.microsoft.com/download). You can use the CLI or an IDE
-such as Visual Studio Community or Visual Studio Code. The code was tested only on
-Windows, if you use Linux you may need to change some things (and if you do, please
-open a pull request).
+such as Visual Studio Community or Visual Studio Code.
 
 ## License
 
