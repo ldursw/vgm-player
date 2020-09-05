@@ -16,6 +16,8 @@ void Sn76489::setup(void)
 #else
     EmulatedPsg::reset();
     pinMode(PSG_DAC, OUTPUT);
+    analogWriteResolution(12);
+    enableDAC0();
 #endif
 
     // silence PSG
