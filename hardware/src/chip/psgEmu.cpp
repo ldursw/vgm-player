@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 #include "psgEmu.hpp"
 
-float EmulatedPsg::_clock;
+flint EmulatedPsg::_clock;
 int32_t EmulatedPsg::_clocksForSample;
 int32_t EmulatedPsg::_registers[8];
 int32_t EmulatedPsg::_latchedRegister;
@@ -10,7 +10,7 @@ int32_t EmulatedPsg::_noiseFreq;
 int32_t EmulatedPsg::_toneFreqVals[4];
 int32_t EmulatedPsg::_toneFreqPos[4];
 int32_t EmulatedPsg::_channels[4];
-float EmulatedPsg::_intermediatePos[4];
+flint EmulatedPsg::_intermediatePos[4];
 bool EmulatedPsg::_antiAliasing[4];
 const int32_t EmulatedPsg::VolumeValues[16] =
 {

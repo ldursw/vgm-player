@@ -4,6 +4,13 @@
 
 #include <cstdint>
 
+// FLoat or INT. Prefer int when FPU is unavailable
+#if __SOFTFP__
+typedef int32_t flint;
+#else
+typedef float flint;
+#endif
+
 // SN76489 emulation by Maxim in 2001 and 2002
 // Taken from VGMPlay source
 class EmulatedPsg
@@ -25,12 +32,12 @@ private:
     // Value below which PSG does not output
     static constexpr int32_t Cutoff = 0x6;
     // Sample clock
-    static constexpr float SampleClock = 3579545.0f / 16.0f / 44100.0f;
+    static constexpr flint SampleClock = 3579545.0f / 16.0f / 44100.0f;
     // Volume values
     static const int32_t VolumeValues[16];
 
     // Clock ticks
-    static float _clock;
+    static flint _clock;
     static int32_t _clocksForSample;
 
     // PSG registers:
@@ -50,7 +57,7 @@ private:
     static int32_t _channels[4];
     // intermediate values used at boundaries between + and -
     // (does not need double accuracy)
-    static float _intermediatePos[4];
+    static flint _intermediatePos[4];
     static bool _antiAliasing[4];
 };
 
