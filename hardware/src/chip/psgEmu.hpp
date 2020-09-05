@@ -27,7 +27,7 @@ private:
     // Value below which PSG does not output
     static constexpr int Cutoff = 0x6;
     // Sample clock
-    static constexpr float SampleClock = 3579545.0 / 16.0 / 44100.0;
+    static constexpr float SampleClock = 3579545.0f / 16.0f / 44100.0f;
     // Volume values
     static const int VolumeValues[16];
 

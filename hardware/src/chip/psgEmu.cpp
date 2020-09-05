@@ -217,7 +217,7 @@ void EmulatedPsg::updateNoiseChannel(void)
     if (_toneFreqPos[3] == 1)
     {
         // On the positive edge of the square wave (only once per cycle)
-        int Feedback;
+        int feedback;
         if ((_registers[6] & 0x4) > 0)
         {
             // White noise */
@@ -225,15 +225,15 @@ void EmulatedPsg::updateNoiseChannel(void)
             // bits fed back, I can do
             // Feedback=(nsr & fb) && (nsr & fb ^ fb)
             // since that's (one or more bits set) && (not all bits set)
-            Feedback = ((_noiseShiftRegister & 9) > 0 &&
+            feedback = ((_noiseShiftRegister & 9) > 0 &&
                 ((_noiseShiftRegister & 9) ^ 9) > 0) ? 1 : 0;
         }
         else
         {
             // Periodic noise
-            Feedback = _noiseShiftRegister & 1;
+            feedback = _noiseShiftRegister & 1;
         }
 
-        _noiseShiftRegister = (_noiseShiftRegister >> 1) | (Feedback << (16 - 1));
+        _noiseShiftRegister = (_noiseShiftRegister >> 1) | (feedback << (16 - 1));
     }
 }
