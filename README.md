@@ -13,8 +13,19 @@ the Teensy 3.6 board.
 - Integration with emulators available
 - Supports emulated and discrete SN76489
 - Uses the Mega Amp circuit for amplification
-- Hardware support for Teensy 3.6 and Arduino Due (experimental)
+- Hardware support for Teensy 3.6 and Arduino Due
 - Player support for Windows and Linux (experimental)
+
+## Supported boards
+
+| Board | SD Card | Stream | Real PSG | Emulated PSG |
+| --- | --- | --- | --- | --- |
+| Teensy 3.6 | ✔️ | ✔️ | ✔️ | ✔️ |
+| Arduino Due | ❔ | ✔️ | ✔️ | ✔️<sup>1</sup> |
+
+✔️ Fully supported  
+❔ Not tested  
+<sup>1</sup> PSG emulation is slow on Due due to lack of FPU  
 
 ## Demo
 - [Instruction streaming from PC](https://www.youtube.com/watch?v=saAEF2lk2_Y)
@@ -61,7 +72,8 @@ installing PlatformIO just open the `hardware` directory and upload the code to 
 
 To compile the player application you will need the
 [.NET Core SDK](https://dotnet.microsoft.com/download). You can use the CLI or an IDE
-such as Visual Studio Community or Visual Studio Code.
+such as Visual Studio Community or Visual Studio Code. On Linux you may have to install
+the `libSDL2` package.
 
 ## License
 
