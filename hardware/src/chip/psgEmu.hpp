@@ -20,8 +20,6 @@ private:
     static void updateToneChannel(void);
     static void updateNoiseChannel(void);
 
-    // Constants
-    static constexpr float FloatMin = 1.175494351e-38F;
     // Initial state of shift register
     static constexpr int NoiseInitialState = 0x8000;
     // Value below which PSG does not output
@@ -53,6 +51,7 @@ private:
     // intermediate values used at boundaries between + and -
     // (does not need double accuracy)
     static float _intermediatePos[4];
+    static bool _antiAliasing[4];
 };
 
 #endif

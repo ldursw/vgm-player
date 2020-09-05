@@ -11,6 +11,7 @@ int EmulatedPsg::_toneFreqVals[4];
 int EmulatedPsg::_toneFreqPos[4];
 int EmulatedPsg::_channels[4];
 float EmulatedPsg::_intermediatePos[4];
+bool EmulatedPsg::_antiAliasing[4];
 const int EmulatedPsg::VolumeValues[16] =
 {
     // These values are taken from a real SMS2's output
@@ -34,7 +35,7 @@ void EmulatedPsg::reset(void)
         _toneFreqPos[i] = 1;
 
         // Set intermediate positions to do-not-use value
-        _intermediatePos[i] = FloatMin;
+        _antiAliasing[i] = false;
     }
 
     _latchedRegister = 0;
@@ -110,7 +111,7 @@ void EmulatedPsg::calculateToneChannel(void)
 {
     for (int i = 0; i <= 2; ++i)
     {
-        if (_intermediatePos[i] != FloatMin)
+        if (_antiAliasing[i])
         {
             // Intermediate position (antialiasing)
             _channels[i] = (short)(VolumeValues[_registers[2 * i + 1]] *
@@ -178,12 +179,13 @@ void EmulatedPsg::updateToneChannel(void)
                     _toneFreqVals[i]) * _toneFreqPos[i] / (_clocksForSample + _clock);
                 // Flip the flip-flop
                 _toneFreqPos[i] = -_toneFreqPos[i];
+                _antiAliasing[i] = false;
             }
             else
             {
                 // stuck value
                 _toneFreqPos[i] = 1;
-                _intermediatePos[i] = FloatMin;
+                _antiAliasing[i] = true;
             }
 
             _toneFreqVals[i] += _registers[i * 2] *
@@ -192,7 +194,7 @@ void EmulatedPsg::updateToneChannel(void)
         else
         {
             // signal no antialiasing needed
-            _intermediatePos[i] = FloatMin;
+            _antiAliasing[i] = false;
         }
     }
 }
