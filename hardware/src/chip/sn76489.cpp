@@ -60,7 +60,7 @@ void Sn76489::update(void)
 {
 #ifndef USE_REAL_PSG
     // divide value to reduce the volume
-    int32_t sample = EmulatedPsg::getSample() / 6;
+    int32_t sample = EmulatedPsg::getSample() / PSG_ATTENUATION;
     // add offset for bipolar output
     analogWriteDAC0(sample + 2048);
 #endif
