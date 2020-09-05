@@ -179,13 +179,13 @@ void EmulatedPsg::updateToneChannel(void)
                     _toneFreqVals[i]) * _toneFreqPos[i] / (_clocksForSample + _clock);
                 // Flip the flip-flop
                 _toneFreqPos[i] = -_toneFreqPos[i];
-                _antiAliasing[i] = false;
+                _antiAliasing[i] = true;
             }
             else
             {
                 // stuck value
                 _toneFreqPos[i] = 1;
-                _antiAliasing[i] = true;
+                _antiAliasing[i] = false;
             }
 
             _toneFreqVals[i] += _registers[i * 2] *
