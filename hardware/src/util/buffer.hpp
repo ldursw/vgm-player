@@ -2,23 +2,17 @@
 #ifndef INC_BUFFER
 #define INC_BUFFER
 
-// https://github.com/embeddedartistry/embedded-resources/blob/master/examples/cpp/circular_buffer.cpp
+// https://www.snellman.net/blog/archive/2016-12-13-ring-buffers/
 template <class T, size_t N>
 class CircularBuffer
 {
 public:
+    // https://stackoverflow.com/a/10585550
+    static_assert((N > 0) & !(N & (N - 1)), "Buffer size must be a power of two");
+
     void put(T item)
     {
-        _buf[_head] = item;
-
-        if (_full)
-        {
-            _tail = (_tail + 1) % N;
-        }
-
-        _head = (_head + 1) % N;
-
-        _full = _head == _tail;
+        _buf[mask(_tail++)] = item;
     }
 
     bool get(T *value)
@@ -28,52 +22,46 @@ public:
             return false;
         }
 
-        //Read data and advance the tail (we now have a free space)
-        *value = _buf[_tail];
-        _full = false;
-        _tail = (_tail + 1) % N;
+        *value = _buf[mask(_head++)];
 
         return true;
     }
 
     void reset(void)
     {
-        _head = _tail;
-        _full = false;
+        _head = 0;
+        _tail = 0;
     }
 
     bool empty(void) const
     {
-        //if head and tail are equal, we are empty
-        return !_full && (_head == _tail);
+        return _head == _tail;
     }
 
     bool full(void) const
     {
-        //If tail is ahead the head by 1, we are full
-        return _full;
+        return size() == N;
     }
 
-    size_t capacity(void) const
+    constexpr size_t capacity(void) const
     {
         return N;
     }
 
     size_t size(void) const
     {
-        if (_full)
-        {
-            return N;
-        }
-
-        return (_head >= _tail ? 0 : N) + _head - _tail;
+        return _tail - _head;
     }
 
 private:
     T _buf[N];
     size_t _head = 0;
     size_t _tail = 0;
-    bool _full = false;
+
+    constexpr const size_t mask(size_t val) const
+    {
+        return val & (N - 1);
+    }
 };
 
 #endif
