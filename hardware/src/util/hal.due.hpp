@@ -1,7 +1,7 @@
 #define SdFatCls SdFat
 #define PSG_WE 29
 #define PSG_DAC DAC0
-#define PSG_ATTENUATION 5
+#define PSG_ATTENUATION 4
 #define FM_IC 28
 #define FM_WR 27
 #define FM_A0 26
