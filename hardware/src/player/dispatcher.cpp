@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
+#include <Arduino.h>
 #include "dispatcher.hpp"
 #include "timer.hpp"
 #include "chip/sn76489.hpp"
@@ -16,7 +17,10 @@ void Dispatcher::enqueue(Instruction instruction)
     switch (instruction.type())
     {
         case InstructionType::ResetImmediate:
+            noInterrupts();
             _buffer.reset();
+            interrupts();
+
             Sn76489::setup();
             Ym2612::setup();
             break;
@@ -36,6 +40,8 @@ void Dispatcher::setup(void)
 
 void Dispatcher::process(void)
 {
+    // This function runs on interrupt context
+
 #if ENABLE_PLAYER
     VgmPlayer::play();
 #elif ENABLE_STREAM
