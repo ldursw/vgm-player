@@ -17,15 +17,12 @@ void Dispatcher::enqueue(Instruction instruction)
     switch (instruction.type())
     {
         case InstructionType::ResetImmediate:
-            noInterrupts();
-            _buffer.reset();
-            interrupts();
-
+            resetBuffer();
             Sn76489::setup();
             Ym2612::setup();
             break;
         default:
-            _buffer.put(instruction);
+            putBuffer(instruction);
             break;
     }
 }
@@ -98,4 +95,18 @@ bool Dispatcher::processItem(Instruction item)
     }
 
     return true;
+}
+
+void Dispatcher::resetBuffer(void)
+{
+    noInterrupts();
+    _buffer.reset();
+    interrupts();
+}
+
+void Dispatcher::putBuffer(Instruction instruction)
+{
+    noInterrupts();
+    _buffer.put(instruction);
+    interrupts();
 }

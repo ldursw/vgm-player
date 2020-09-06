@@ -12,7 +12,9 @@ public:
 
     void put(T item)
     {
-        _buf[mask(_tail++)] = item;
+        auto idx = mask(_tail);
+        _buf[idx] = item;
+        _tail++;
     }
 
     bool get(T *value)
@@ -22,7 +24,9 @@ public:
             return false;
         }
 
-        *value = _buf[mask(_head++)];
+        auto idx = mask(_head);
+        *value = _buf[idx];
+        _head++;
 
         return true;
     }

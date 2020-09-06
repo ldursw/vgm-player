@@ -51,14 +51,19 @@ public:
     static void enqueue(Instruction);
     static void setup(void);
     static void process(void);
-
-    static bool isBufferFull(void)
+    __attribute__((always_inline)) inline static bool isBufferFull(void)
     {
-        return _buffer.size() >= _buffer.capacity();
+        noInterrupts();
+        auto isFull = _buffer.size() >= _buffer.capacity();
+        interrupts();
+
+        return isFull;
     }
 
 private:
     static bool processItem(Instruction item);
+    static void resetBuffer(void);
+    static void putBuffer(Instruction);
 
     static constexpr size_t BufferSize = 16;
     static CircularBuffer<Instruction, BufferSize> _buffer;
