@@ -42,6 +42,8 @@ void Dispatcher::process(void)
 {
     // This function runs on interrupt context
 
+    Sn76489::update();
+
 #if ENABLE_PLAYER
     VgmPlayer::play();
 #elif ENABLE_STREAM
@@ -61,8 +63,6 @@ void Dispatcher::process(void)
         }
     }
 #endif
-
-    Sn76489::update();
 }
 
 bool Dispatcher::processItem(Instruction item)
