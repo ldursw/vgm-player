@@ -21,11 +21,10 @@ the Teensy 3.6 board.
 | Board | SD Card | Stream | Real PSG | Emulated PSG |
 | --- | --- | --- | --- | --- |
 | Teensy 3.6 | ✔️ | ✔️ | ✔️ | ✔️ |
-| Arduino Due | ❔ | ✔️ | ✔️ | ✔️<sup>1</sup> |
+| Arduino Due | ❔ | ✔️ | ✔️ | ✔️ |
 
 ✔️ Fully supported  
 ❔ Not tested  
-<sup>1</sup> PSG emulation is slow on Due due to lack of FPU  
 
 ## Demo
 - [Instruction streaming from PC](https://www.youtube.com/watch?v=saAEF2lk2_Y)
