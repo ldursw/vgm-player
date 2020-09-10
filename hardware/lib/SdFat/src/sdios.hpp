@@ -22,15 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FatLib_h
-#define FatLib_h
-#include "ArduinoFiles.hpp"
-#include "FatFileSystem.hpp"
-#include "FatLibConfig.hpp"
-#include "FatVolume.hpp"
-#include "FatFile.hpp"
-#include "StdioStream.hpp"
-//------------------------------------------------------------------------------
-/** FatFileSystem version YYYYMMDD */
-#define FAT_LIB_VERSION 20150131
-#endif  // FatLib_h
+#ifndef sdios_h
+#define sdios_h
+/**
+ * \file
+ * \brief C++ IO Streams features.
+ */
+#include "FatLib/fstream.hpp"
+#include "FatLib/ArduinoStream.hpp"
+#endif  // sdios_h
