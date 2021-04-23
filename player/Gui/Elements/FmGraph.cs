@@ -87,8 +87,6 @@ namespace VgmPlayer.Gui.Elements
                     freq = slot.mul > 0 ? ch.freq * slot.mul : ch.freq / 2;
                 }
 
-                // we assume "too high" frequency
-                freq = Math.Min(freq, 0x3fff);
 
                 var fy = Map((ushort)freq, 0x3fff, 0);
                 Rect.DrawRectangle(renderer, x, y + fy - 1, 10, 3, 0xff0000);
@@ -118,6 +116,9 @@ namespace VgmPlayer.Gui.Elements
 
         private static byte Map(ushort x, ushort in_min, ushort in_max)
         {
+            x = Math.Max(x, Math.Min(in_min, in_max));
+            x = Math.Min(x, Math.Max(in_min, in_max));
+
             return (byte)((x - in_min) * 100 / (in_max - in_min));
         }
     }
