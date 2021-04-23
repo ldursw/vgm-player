@@ -92,7 +92,7 @@ namespace VgmPlayer.Gui.Elements
                 Rect.DrawRectangle(renderer, x, y + fy - 1, 10, 3, 0xff0000);
                 if (slot.sl > slot.tl)
                 {
-                    var sy = Map(slot.sl, 0x3fff, 0);
+                    var sy = Map(slot.sl, 0, 0x1fc0);
                     Rect.DrawRectangle(renderer, x, y + sy - 1, 10, 3, 0xbbbbbb);
                 }
             }
