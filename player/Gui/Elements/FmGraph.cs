@@ -42,6 +42,18 @@ namespace VgmPlayer.Gui.Elements
                 Font.Render(renderer, ">", ax + 36, ay + 120, 0xff0000);
             }
 
+            var maxMul = Math.Max(
+                ch.slots[0].mul,
+                Math.Max(
+                    ch.slots[1].mul,
+                    Math.Max(
+                        ch.slots[2].mul,
+                        ch.slots[3].mul
+                    )
+                )
+            );
+            maxMul = Math.Max(maxMul, (ushort)1);
+
             for (var i = 0; i < ch.slots.Length; i++)
             {
                 var slot = ch.slots[i];
@@ -87,6 +99,7 @@ namespace VgmPlayer.Gui.Elements
                     freq = slot.mul > 0 ? ch.freq * slot.mul : ch.freq / 2;
                 }
 
+                freq = Map(freq, 0, 0x3fff * maxMul, 0, 0x3fff);
 
                 var fy = Map((ushort)freq, 0x3fff, 0);
                 Rect.DrawRectangle(renderer, x, y + fy - 1, 10, 3, 0xff0000);
@@ -120,6 +133,14 @@ namespace VgmPlayer.Gui.Elements
             x = Math.Min(x, Math.Max(in_min, in_max));
 
             return (byte)((x - in_min) * 100 / (in_max - in_min));
+        }
+
+        private static int Map(int x, int in_min, int in_max, int out_min, int out_max)
+        {
+            x = Math.Max(x, Math.Min(in_min, in_max));
+            x = Math.Min(x, Math.Max(in_min, in_max));
+
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
         }
     }
 }
