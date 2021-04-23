@@ -111,28 +111,28 @@ void EmulatedPsg::calculateToneChannel(void)
 {
     for (uint8_t i = 0; i <= 2; ++i)
     {
+        int32_t volume = VolumeValues[_registers[2 * i + 1]];
         if (_antiAliasing[i])
         {
             // Intermediate position (antialiasing)
-            _channels[i] = (short)(VolumeValues[_registers[2 * i + 1]] *
-                _intermediatePos[i]);
+            _channels[i] = volume * _intermediatePos[i];
         }
         else
         {
             // Flat (no antialiasing needed)
-            _channels[i] = VolumeValues[_registers[2 * i + 1]] *
-                _toneFreqPos[i];
+            _channels[i] = volume * _toneFreqPos[i];
         }
     }
 }
 
 void EmulatedPsg::calculateNoiseChannel(void)
 {
+    int32_t volume = VolumeValues[_registers[7]];
     // double noise volume
-    // _channels[3] = PSGVolumeValues[_registers[7]] * (_noiseShiftRegister & 0x1) * 2;
+    // _channels[3] = volume * (_noiseShiftRegister & 0x1) * 2;
 
     // Now the noise is bipolar, too. -Valley Bell
-    _channels[3] = VolumeValues[_registers[7]] * ((_noiseShiftRegister & 0x1) * 2 - 1);
+    _channels[3] = volume * ((_noiseShiftRegister & 0x1) * 2 - 1);
 
     // due to the way the white noise works here, it seems twice as loud as it should be
     // _channels[3] >>= (_registers[6] & 0x4) >> 2;
