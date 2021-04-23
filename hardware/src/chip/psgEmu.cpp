@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0
 #include "psgEmu.hpp"
 
-flint EmulatedPsg::_clock;
+static const fpm::fixed_24_8 SampleClock { 3579545.0f / 16.0f / 44100.0f };
+
+fpm::fixed_24_8 EmulatedPsg::_clock;
 int32_t EmulatedPsg::_clocksForSample;
 int32_t EmulatedPsg::_registers[8];
 int32_t EmulatedPsg::_latchedRegister;
@@ -10,7 +12,7 @@ int32_t EmulatedPsg::_noiseFreq;
 int32_t EmulatedPsg::_toneFreqVals[4];
 int32_t EmulatedPsg::_toneFreqPos[4];
 int32_t EmulatedPsg::_channels[4];
-flint EmulatedPsg::_intermediatePos[4];
+fpm::fixed_24_8 EmulatedPsg::_intermediatePos[4];
 bool EmulatedPsg::_antiAliasing[4];
 const int32_t EmulatedPsg::VolumeValues[16] =
 {
@@ -44,7 +46,7 @@ void EmulatedPsg::reset(void)
     _noiseShiftRegister = NoiseInitialState;
 
     // Zero clock
-    _clock = 0;
+    _clock *= 0;
 }
 
 void EmulatedPsg::write(uint8_t data)
@@ -115,7 +117,7 @@ void EmulatedPsg::calculateToneChannel(void)
         if (_antiAliasing[i])
         {
             // Intermediate position (antialiasing)
-            _channels[i] = volume * _intermediatePos[i];
+            _channels[i] = static_cast<int>(volume * _intermediatePos[i]);
         }
         else
         {
