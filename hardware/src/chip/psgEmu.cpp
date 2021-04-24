@@ -51,17 +51,17 @@ void EmulatedPsg::reset(void)
 
 void EmulatedPsg::write(uint8_t data)
 {
-    // Latch/data byte  %1 cc t dddd
     if ((data & 0x80) > 0)
     {
+        // Latch/data byte %1 cc t dddd
         // zero low 4 bits and replace with data
         _latchedRegister = (data >> 4) & 0x07;
         _registers[_latchedRegister] =
             (_registers[_latchedRegister] & 0x3f0) | (data & 0xf);
     }
-    // Data byte        %0 - dddddd
     else if (!(_latchedRegister % 2 > 0) && (_latchedRegister < 5))
     {
+        // Data byte %0 - dddddd
         // Tone register
         // zero high 6 bits and replace with data
         _registers[_latchedRegister] =
@@ -148,10 +148,9 @@ void EmulatedPsg::incrementClock(void)
     _clock -= _clocksForSample;     // remove integer part
 
     // Decrement tone channel counters
-    for (uint8_t i = 0; i <= 2; ++i)
-    {
-        _toneFreqVals[i] -= _clocksForSample;
-    }
+    _toneFreqVals[0] -= _clocksForSample;
+    _toneFreqVals[1] -= _clocksForSample;
+    _toneFreqVals[2] -= _clocksForSample;
 
     // Noise channel: match to tone2 or decrement its counter
     if (_noiseFreq == 0x80)
