@@ -29,7 +29,7 @@ private:
     static const int32_t VolumeValues[16];
 
     // Clock ticks
-    static fpm::fixed_24_8 _clock;
+    static fpm::fixed_16_16 _clock;
     static int32_t _clocksForSample;
 
     // PSG registers:
@@ -49,7 +49,7 @@ private:
     static int32_t _channels[4];
     // intermediate values used at boundaries between + and -
     // (does not need double accuracy)
-    static fpm::fixed_24_8 _intermediatePos[4];
+    static fpm::fixed_16_16 _intermediatePos[4];
     static bool _antiAliasing[4];
 };
 

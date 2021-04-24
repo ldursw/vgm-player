@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0
 #include "psgEmu.hpp"
 
-static const fpm::fixed_24_8 SampleClock { 3579545.0f / 16.0f / 44100.0f };
+static const fpm::fixed_16_16 SampleClock { 3579545.0f / 16.0f / 44100.0f };
 
-fpm::fixed_24_8 EmulatedPsg::_clock;
+fpm::fixed_16_16 EmulatedPsg::_clock;
 int32_t EmulatedPsg::_clocksForSample;
 int32_t EmulatedPsg::_registers[8];
 int32_t EmulatedPsg::_latchedRegister;
@@ -12,7 +12,7 @@ int32_t EmulatedPsg::_noiseFreq;
 int32_t EmulatedPsg::_toneFreqVals[4];
 int32_t EmulatedPsg::_toneFreqPos[4];
 int32_t EmulatedPsg::_channels[4];
-fpm::fixed_24_8 EmulatedPsg::_intermediatePos[4];
+fpm::fixed_16_16 EmulatedPsg::_intermediatePos[4];
 bool EmulatedPsg::_antiAliasing[4];
 const int32_t EmulatedPsg::VolumeValues[16] =
 {
