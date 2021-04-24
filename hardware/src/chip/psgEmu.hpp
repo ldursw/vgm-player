@@ -18,7 +18,7 @@ private:
     static void calculateToneChannel(void);
     static void calculateNoiseChannel(void);
     static void incrementClock(void);
-    static void updateToneChannel(void);
+    static void updateToneChannel(uint8_t);
     static void updateNoiseChannel(void);
 
     // Initial state of shift register
