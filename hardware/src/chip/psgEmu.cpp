@@ -144,7 +144,7 @@ void EmulatedPsg::incrementClock(void)
 {
     // Increment clock by 1 sample length
     _clock += SampleClock;
-    _clocksForSample = (int)_clock; // truncate
+    _clocksForSample = static_cast<int>(_clock); // truncate
     _clock -= _clocksForSample;     // remove integer part
 
     // Decrement tone channel counters
@@ -168,36 +168,36 @@ void EmulatedPsg::updateToneChannel(void)
 {
     for (uint8_t i = 0; i <= 2; ++i)
     {
-        if (_toneFreqVals[i] <= 0)
-        {
-            // If the counter gets below 0...
-            if (_registers[i * 2] >= Cutoff)
-            {
-                // For tone-generating values, calculate how much of
-                // the sample is + and how much is -
-                // This is optimised into an even more confusing state
-                // than it was in the first place...
-                _intermediatePos[i] = (_clocksForSample - _clock + 2 *
-                    _toneFreqVals[i]) * _toneFreqPos[i] / (_clocksForSample + _clock);
-                // Flip the flip-flop
-                _toneFreqPos[i] = -_toneFreqPos[i];
-                _antiAliasing[i] = true;
-            }
-            else
-            {
-                // stuck value
-                _toneFreqPos[i] = 1;
-                _antiAliasing[i] = false;
-            }
-
-            _toneFreqVals[i] += _registers[i * 2] *
-                (_clocksForSample / _registers[i * 2] + 1);
-        }
-        else
+        if (_toneFreqVals[i] >= 0)
         {
             // signal no antialiasing needed
             _antiAliasing[i] = false;
+
+            continue;
         }
+
+        // If the counter gets below 0...
+        if (_registers[i * 2] >= Cutoff)
+        {
+            // For tone-generating values, calculate how much of
+            // the sample is + and how much is -
+            // This is optimised into an even more confusing state
+            // than it was in the first place...
+            _intermediatePos[i] = (_clocksForSample - _clock + 2 * _toneFreqVals[i]) *
+                _toneFreqPos[i] / (_clocksForSample + _clock);
+            // Flip the flip-flop
+            _toneFreqPos[i] = -_toneFreqPos[i];
+            _antiAliasing[i] = true;
+        }
+        else
+        {
+            // stuck value
+            _toneFreqPos[i] = 1;
+            _antiAliasing[i] = false;
+        }
+
+        _toneFreqVals[i] += _registers[i * 2] *
+            (_clocksForSample / _registers[i * 2] + 1);
     }
 }
 
@@ -214,8 +214,7 @@ void EmulatedPsg::updateNoiseChannel(void)
     if (_noiseFreq != 0x80)
     {
         // If not matching tone2, decrement counter
-        _toneFreqVals[3] += _noiseFreq *
-            (_clocksForSample / _noiseFreq + 1);
+        _toneFreqVals[3] += _noiseFreq * (_clocksForSample / _noiseFreq + 1);
     }
 
     if (_toneFreqPos[3] == 1)
@@ -224,7 +223,7 @@ void EmulatedPsg::updateNoiseChannel(void)
         int32_t feedback;
         if ((_registers[6] & 0x4) > 0)
         {
-            // White noise */
+            // White noise
             // Calculate parity of fed-back bits for feedback. If two
             // bits fed back, I can do
             // Feedback=(nsr & fb) && (nsr & fb ^ fb)
