@@ -74,23 +74,22 @@ void EmulatedPsg::write(uint8_t data)
         _registers[_latchedRegister] = data & 0x0f;
     }
 
-    switch (_latchedRegister)
+    if (_latchedRegister == 6)
     {
-        case 0:
-        case 2:
-        case 4: // Tone channels
-            if (_registers[_latchedRegister] == 0)
-            {
-                // Zero frequency changed to 1 to avoid div/0
-                _registers[_latchedRegister] = 1;
-            }
-            break;
-        case 6: // Noise
-            // reset shift register
-            _noiseShiftRegister = NoiseInitialState;
-            // set noise signal generator frequency
-            _noiseFreq = 0x10 << (_registers[6] & 0x3);
-            break;
+        // Noise channel (register 6)
+        // reset shift register
+        _noiseShiftRegister = NoiseInitialState;
+        // set noise signal generator frequency
+        _noiseFreq = 0x10 << (_registers[6] & 0x3);
+    }
+    else
+    {
+        // Tone channels (register 0, 2, 4)
+        if (_registers[_latchedRegister] == 0)
+        {
+            // Zero frequency changed to 1 to avoid div/0
+            _registers[_latchedRegister] = 1;
+        }
     }
 }
 
