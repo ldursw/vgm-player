@@ -25,6 +25,12 @@ namespace VgmPlayer.Gui
             SDL_PauseAudioDevice(_audioDev, 0);
         }
 
+        public static void Stop()
+        {
+            SDL_PauseAudioDevice(_audioDev, 1);
+            SDL_CloseAudioDevice(_audioDev);
+        }
+
         private static void OnAudioTick(IntPtr userdata, IntPtr stream, int len)
         {
             var stop = false;

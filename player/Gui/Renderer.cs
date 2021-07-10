@@ -61,6 +61,7 @@ namespace VgmPlayer.Gui
             {
                 if (e.type == SDL_EventType.SDL_QUIT)
                 {
+                    AudioQueue.Stop();
                     VgmSerial.Stop();
 
                     return false;
