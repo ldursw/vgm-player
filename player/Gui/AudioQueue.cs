@@ -21,7 +21,7 @@ namespace VgmPlayer.Gui
                 callback = OnAudioTick,
             };
 
-            _audioDev = SDL_OpenAudioDevice(null, 0, ref audioSpec, out var _, 0);
+            _audioDev = SDL_OpenAudioDevice(null, 0, ref audioSpec, out _, 0);
             SDL_PauseAudioDevice(_audioDev, 0);
         }
 
