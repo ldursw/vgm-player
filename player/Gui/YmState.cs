@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0
 namespace VgmPlayer.Gui
 {
     // Ported from XGM Player - SGDK

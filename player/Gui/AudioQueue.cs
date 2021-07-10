@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0
 using System;
 using System.Runtime.InteropServices;
 using VgmPlayer.Structs;
