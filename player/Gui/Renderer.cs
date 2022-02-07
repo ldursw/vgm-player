@@ -22,8 +22,8 @@ namespace VgmPlayer.Gui
                 new FmGraph(40, 10),
                 new PcmGraph(450, 10),
                 new PsgGraph(640, 10),
-                // new PsgRegister(200, 160),
-                // new FmRegister(140, 200),
+                new PsgRegister(200, 160),
+                new FmRegister(140, 200),
             };
         }
 
