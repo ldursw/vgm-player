@@ -41,10 +41,10 @@ an emulated PSG is used instead of the discrete SN76489. It is
 [widely known](https://www.smspower.org/Development/SN76489#TheLinearFeedbackShiftRegister)
 that the Sega version has some differences mainly in the noise channel.
 
-For example, most games get a [weird artifact](https://output.jsbin.com/niwohilezo) instead
-of the [expected noise channel](https://output.jsbin.com/robedigulo).
-After Burner II has a constant tone on a [discrete chip](https://output.jsbin.com/lidamemiti)
-whereas [on emulation](https://output.jsbin.com/vixenimoge) it sounds right.
+For example, most games get a [weird artifact](https://gitcdn.link/cdn/ldursw/vgm-player/main/assets/afterburner-discrete.ogg) instead
+of the [expected noise channel](https://gitcdn.link/cdn/ldursw/vgm-player/main/assets/afterburner-emulated.ogg).
+After Burner II has a constant tone on a [discrete chip](https://gitcdn.link/cdn/ldursw/vgm-player/main/assets/panicpuppet-discrete.ogg)
+whereas [on emulation](https://gitcdn.link/cdn/ldursw/vgm-player/main/assets/panicpuppet-emulated.ogg) it sounds right.
 
 When using an emulated PSG the microcontroller will emulate the chip and the output is
 sent to the `DAC0` pin at 44.1 kHz.
@@ -57,7 +57,9 @@ SN76489 and connect `/WE` to pin 29 though a voltage converter.
 
 Another difference is that the hardware can be controlled via a companion application
 written in .NET Core that accepts a generic input class and sends to the hardware via
-USB and also [displays](assets/playergui.png) the current state on screen.
+USB and also displays the current state on screen.
+
+![GUI](https://raw.githubusercontent.com/ldursw/vgm-player/main/assets/playergui.png)
 
 There are 3 available input methods. `VgmFile` reads standard `.vgm` and `.vgz` files.
 `VgmPipe` creates a named pipe `vgmstream` that accepts commands from other applications,
