@@ -5,7 +5,7 @@
 #include "util/hal.hpp"
 
 bool ShiftRegister::_setup = false;
-static SPISettings _srSpiSettings(2000000, MSBFIRST, SPI_MODE0);
+static SPISettings _srSpiSettings(5'000'000, MSBFIRST, SPI_MODE0);
 
 void ShiftRegister::setup(void)
 {
@@ -36,5 +36,4 @@ void ShiftRegister::pushData(uint8_t data)
     SPI.endTransaction();
 
     digitalWriteFast(SS, HIGH);
-    asm("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n");
 }
