@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 #include "psgEmu.hpp"
+#include "util/fixed.hpp"
 
 static const fpm::fixed_16_16 SampleClock { 3579545.0f / 16.0f / 44100.0f };
 

@@ -3,7 +3,14 @@
 #define INC_CHIP_PSGNOISE
 
 #include <cstdint>
-#include "util/fixed.hpp"
+
+namespace fpm
+{
+    template <typename BaseType, typename IntermediateType, unsigned int FractionBits>
+    class fixed;
+
+    using fixed_16_16 = fixed<std::int32_t, std::int64_t, 16>;
+};
 
 // SN76489 emulation by Maxim in 2001 and 2002
 // Taken from VGMPlay source

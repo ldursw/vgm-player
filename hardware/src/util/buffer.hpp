@@ -62,7 +62,7 @@ private:
     size_t _head = 0;
     size_t _tail = 0;
 
-    constexpr const size_t mask(size_t val) const
+    constexpr size_t mask(size_t val) const
     {
         return val & (N - 1);
     }

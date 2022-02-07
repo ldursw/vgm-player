@@ -5,6 +5,7 @@
 // C++ header-only fixed-point math library
 // https://github.com/MikeLankamp/fpm
 
+#include <cassert>
 #include <cmath>
 #include <cstdint>
 #include <functional>
@@ -47,7 +48,14 @@ public:
     // Like static_cast, this truncates bits that don't fit.
     template <typename T, typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
     constexpr inline explicit fixed(T val) noexcept
-        : m_value(static_cast<BaseType>(std::round(val * FRACTION_MULT)))
+        : m_value(static_cast<BaseType>((val >= 0.0) ? (val * FRACTION_MULT + T{0.5}) : (val * FRACTION_MULT - T{0.5})))
+    {}
+
+    // Constructs from another fixed-point type with possibly different underlying representation.
+    // Like static_cast, this truncates bits that don't fit.
+    template <typename B, typename I, unsigned int F>
+    constexpr inline explicit fixed(fixed<B,I,F> val) noexcept
+        : m_value(from_fixed_point<F>(val.raw_value()).raw_value())
     {}
 
     // Explicit conversion to a floating-point type

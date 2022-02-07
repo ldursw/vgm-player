@@ -23,6 +23,9 @@ inline __attribute__((always_inline)) void digitalWriteFast(uint8_t pin, uint8_t
 
 inline __attribute__((always_inline)) void enableDAC0()
 {
+    pinMode(PSG_DAC, OUTPUT);
+    analogWriteResolution(12);
+
     /* Enable clock for DACC_INTERFACE */
     pmc_enable_periph_clk(DACC_INTERFACE_ID);
 
