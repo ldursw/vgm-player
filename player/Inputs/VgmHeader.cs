@@ -49,7 +49,7 @@ namespace VgmPlayer.Inputs
 
         private uint CalculateDataOffset(uint value)
         {
-            return VersionNumber < 0x150 ? 0x40 : value + 0x34;
+            return value == 0 ? 0x40 : value + 0x34;
         }
     }
 }
