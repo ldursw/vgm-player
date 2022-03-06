@@ -68,11 +68,12 @@ namespace VgmPlayer.Outputs
 
         private static void SendData(Stream stream, VgmInstruction instruction)
         {
-            stream.Write(stackalloc byte[3]
+            stream.Write(stackalloc byte[4]
             {
                 (byte)instruction.Type,
                 instruction.Data1,
-                instruction.Data2
+                instruction.Data2,
+                0
             });
         }
 
@@ -98,7 +99,7 @@ namespace VgmPlayer.Outputs
                     true
                 ),
                 FileAccess.Write,
-                3 * 16, // buffer 16 3-byte commands
+                4 * 16, // buffer 16 4-byte commands
                 false
             );
         }

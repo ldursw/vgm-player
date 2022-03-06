@@ -44,7 +44,7 @@ void loop(void)
         return;
     }
 
-    char buf[3];
+    char buf[4];
     uint8_t index = 0;
     while (index < sizeof(buf))
     {
