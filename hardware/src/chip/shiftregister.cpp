@@ -5,7 +5,7 @@
 #include "util/hal.hpp"
 
 bool ShiftRegister::_setup = false;
-static SPISettings _srSpiSettings(5'000'000, MSBFIRST, SPI_MODE0);
+static SPISettings _srSpiSettings(8'000'000, MSBFIRST, SPI_MODE0);
 
 void ShiftRegister::setup(void)
 {
