@@ -17,15 +17,14 @@ void Ym2612::setup(void)
     // setup A1 for FM
     pinMode(FM_A1, OUTPUT);
 
-    // IC and WR HIGH by default
-    digitalWriteFast(FM_IC, HIGH);
+    // CS HIGH by default
     digitalWriteFast(FM_WR, HIGH);
-    // A0 and A1 LOW by default
+    // A0,A1,IC LOW by default
+    digitalWriteFast(FM_IC, LOW);
     digitalWriteFast(FM_A0, LOW);
     digitalWriteFast(FM_A1, LOW);
 
     // reset FM
-    digitalWriteFast(FM_IC, LOW);
     delay(10);
     digitalWriteFast(FM_IC, HIGH);
 }
