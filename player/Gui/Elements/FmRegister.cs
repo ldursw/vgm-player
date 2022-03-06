@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 using System;
+using VgmPlayer.Outputs;
 
 namespace VgmPlayer.Gui.Elements
 {
@@ -18,29 +19,31 @@ namespace VgmPlayer.Gui.Elements
         {
             for (var i = 0x22; i <= 0x2b; i++)
             {
+                if (!FmFilter.IsValidFmRegister(0, (byte)i))
+                {
+                    continue;
+                }
+
                 var y = Y + (16 * (i / 16));
                 var x = X + (i % 16 * 32);
+                var color = (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb);
 
-                Font.Render(renderer, VgmState.FmMap[i], x, y,
-                    (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
+                Font.Render(renderer, VgmState.FmMap[i], x, y, color);
             }
 
-            for (var i = 0x31; i <= 0xb6; i++)
+            for (var i = 0x30; i <= 0xb6; i++)
             {
+                if (!FmFilter.IsValidFmRegister(0, (byte)i))
+                {
+                    continue;
+                }
+
                 var y = Y + (16 * (i / 16));
                 var x = X + (i % 16 * 32);
+                var color = (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb);
 
-                Font.Render(renderer, VgmState.FmMap[i], x, y,
-                    (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
-            }
-
-            for (var i = 0x131; i <= 0x1b6; i++)
-            {
-                var y = Y + 208 + (16 * ((i - 0x131) / 16));
-                var x = X + (i % 16 * 32);
-
-                Font.Render(renderer, VgmState.FmMap[i], x, y,
-                    (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb));
+                Font.Render(renderer, VgmState.FmMap[i], x, y + 16, color);
+                Font.Render(renderer, VgmState.FmMap[i | 0x100], x, y + 176, color);
             }
         }
     }

@@ -129,10 +129,7 @@ namespace VgmPlayer.Gui.Elements
 
         private static byte Map(ushort x, ushort in_min, ushort in_max)
         {
-            x = Math.Max(x, Math.Min(in_min, in_max));
-            x = Math.Min(x, Math.Max(in_min, in_max));
-
-            return (byte)((x - in_min) * 100 / (in_max - in_min));
+            return (byte)Map(x, in_min, in_max, 0, 100);
         }
 
         private static int Map(int x, int in_min, int in_max, int out_min, int out_max)
