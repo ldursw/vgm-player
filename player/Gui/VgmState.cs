@@ -23,7 +23,7 @@ namespace VgmPlayer.Gui
                 PsgState[i] = new PsgState();
             }
 
-            PcmSamples = new byte[128];
+            PcmSamples = new byte[128 * 80];
             for (var i = 0; i < PcmSamples.Length; i++)
             {
                 PcmSamples[i] = 50;

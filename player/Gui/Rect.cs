@@ -46,5 +46,18 @@ namespace VgmPlayer.Gui
 
             SDL_RenderDrawPoints(renderer, points, points.Length);
         }
+
+        public static void DrawLine(IntPtr renderer, int x1, int y1, int x2, int y2, uint color)
+        {
+            SDL_SetRenderDrawColor(
+                renderer,
+                (byte)((color >> 16) & 0xff),
+                (byte)((color >> 8) & 0xff),
+                (byte)((color >> 0) & 0xff),
+                255
+            );
+
+            SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+        }
     }
 }

@@ -58,6 +58,11 @@ namespace VgmPlayer.Gui
                         break;
                     case InstructionType.FmWrite0:
                         VgmCommandParser.ParseFm(0, item.Data1, item.Data2);
+                        if (item.Data1 == 0x2a)
+                        {
+                            gotPcm = true;
+                        }
+
                         stop = true;
                         break;
                     case InstructionType.FmWrite1:

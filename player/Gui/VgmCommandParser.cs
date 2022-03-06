@@ -113,10 +113,6 @@ namespace VgmPlayer.Gui
 
                 VgmState.PcmSamples[^1] = Map(value, 0, 255);
             }
-            else if (port == 0 && address == 0x2b && value == 0)
-            {
-                Array.Fill<byte>(VgmState.PcmSamples, 50);
-            }
 
             VgmState.FmState.Write(port, address, value);
         }
