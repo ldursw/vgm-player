@@ -58,11 +58,17 @@ namespace VgmPlayer.Outputs
 
         private static void WriteCommand(VgmInstruction instruction)
         {
-            VgmState.Commands.Enqueue(instruction);
+            var toSend = FmFilter.FilterCommand(instruction);
+            if (toSend.Type == InstructionType.Nop)
+            {
+                return;
+            }
+
+            VgmState.Commands.Enqueue(toSend);
 
             if (_serial != null)
             {
-                SendData(_serial, instruction);
+                SendData(_serial, toSend);
             }
         }
 
