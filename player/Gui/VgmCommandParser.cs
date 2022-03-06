@@ -12,17 +12,30 @@ namespace VgmPlayer.Gui
         {
             // reset FM
             VgmState.FmState.Reset();
+            Array.Fill<byte>(VgmState.FmMap, 0);
 
             // silence PSG
 
             // channel 0 volume mute
             ParsePsg(0x9f);
+            // channel 0 tone mute
+            ParsePsg(0x80);
+            ParsePsg(0x00);
             // channel 1 volume mute
             ParsePsg(0xbf);
+            // channel 1 tone mute
+            ParsePsg(0xa0);
+            ParsePsg(0x00);
             // channel 2 volume mute
             ParsePsg(0xdf);
+            // channel 2 tone mute
+            ParsePsg(0xc0);
+            ParsePsg(0x00);
             // channel 3 volume mute
             ParsePsg(0xff);
+            // channel 3 tone mute
+            ParsePsg(0xe0);
+            ParsePsg(0x00);
         }
 
         public static void ParsePsg(byte data)
