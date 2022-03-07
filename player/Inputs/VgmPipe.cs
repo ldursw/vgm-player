@@ -15,6 +15,7 @@ namespace VgmPlayer.Inputs
     {
         public IEnumerable<VgmInstruction> Instructions => GetInstructions();
 
+        private const int InstructionsPerFrame = 735;
         private readonly Thread _readThread;
         private readonly CircularBuffer<VgmInstruction> _queue;
 
@@ -23,7 +24,7 @@ namespace VgmPlayer.Inputs
             var pipeFunc = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
                 (Action)ReadPipeWindows : ReadPipeLinux;
 
-            _queue = new CircularBuffer<VgmInstruction>(735 * 3);
+            _queue = new CircularBuffer<VgmInstruction>(InstructionsPerFrame);
             _readThread = new Thread(() => pipeFunc()) { IsBackground = true };
             _readThread.Start();
         }
@@ -59,6 +60,8 @@ namespace VgmPlayer.Inputs
 
             while (true)
             {
+                _queue.Add(VgmInstruction.ResetImmediate());
+
                 using var server = CreateServer();
                 server.WaitForConnection();
 
@@ -69,16 +72,8 @@ namespace VgmPlayer.Inputs
                         break;
                     }
 
-                    _queue.Add(new VgmInstruction(
-                        (InstructionType)buffer[0],
-                        buffer[1],
-                        buffer[2]
-                    ));
+                    ProcessCommand((InstructionType)buffer[0], buffer[1], buffer[2]);
                 }
-
-                server.Dispose();
-
-                _queue.Add(VgmInstruction.ResetImmediate());
             }
         }
 
@@ -93,8 +88,10 @@ namespace VgmPlayer.Inputs
 
             while (true)
             {
-                var sock = socket.Accept();
-                var ns = new NetworkStream(sock);
+                _queue.Add(VgmInstruction.ResetImmediate());
+
+                using var sock = socket.Accept();
+                using var ns = new NetworkStream(sock);
 
                 while (true)
                 {
@@ -103,14 +100,28 @@ namespace VgmPlayer.Inputs
                         break;
                     }
 
-                    _queue.Add(new VgmInstruction(
-                        (InstructionType)buffer[0],
-                        buffer[1],
-                        buffer[2]
-                    ));
+                    ProcessCommand((InstructionType)buffer[0], buffer[1], buffer[2]);
                 }
+            }
+        }
 
-                sock.Dispose();
+        private void ProcessCommand(InstructionType instr, byte arg0, byte arg1)
+        {
+            if (instr == InstructionType.WaitSample)
+            {
+                // expand the wait instruction to keep
+                // the latency constant and fix freezes
+                // when PCM samples start or high latency
+                // when there are few commands.
+                var samples = arg0 | (arg1 << 8);
+                for (var i = 0; i < samples; i++)
+                {
+                    _queue.Add(VgmInstruction.WaitSample(1));
+                }
+            }
+            else
+            {
+                _queue.Add(new VgmInstruction(instr, arg0, arg1));
             }
         }
     }
