@@ -13,48 +13,41 @@ namespace VgmPlayer.Gui.Elements
         public int X { get; set; }
         public int Y { get; set; }
 
+        private readonly int _samplesPerPixel;
+
         public PcmGraph(int x, int y)
         {
             X = x;
             Y = y;
+            _samplesPerPixel = VgmState.PcmSamples.Length / GraphSizeY;
         }
 
         public void Draw(IntPtr renderer)
         {
-            var samplesPerPixel = VgmState.PcmSamples.Length / GraphSizeY;
-            var middleY = GetMiddleY();
-
             for (var i = 0; i < GraphSizeY; i++)
             {
                 // https://stackoverflow.com/a/20190230
-                var low = middleY;
-                var high = middleY;
-                for (var si = 0; si < samplesPerPixel; si++)
+                int? low = null;
+                int? high = null;
+                for (var si = 0; si < _samplesPerPixel; si++)
                 {
-                    var s = VgmState.PcmSamples[(i * samplesPerPixel) + si];
-                    low = Math.Min(low, s);
-                    high = Math.Max(high, s);
+                    var s = VgmState.PcmSamples[(i * _samplesPerPixel) + si];
+                    low = Math.Min(low ?? s, s);
+                    high = Math.Max(high ?? s, s);
+                }
+
+                if (high == null || low == null || high == low)
+                {
+                    high = 50;
+                    low = 50;
                 }
 
                 var x = X + i;
-                var y1 = Y + (GraphSizeX * (low - MinValue) / MaxValue);
-                var y2 = Y + (GraphSizeX * (high - MinValue) / MaxValue);
+                int y1 = Y + (GraphSizeX * (low.Value - MinValue) / MaxValue);
+                var y2 = Y + (GraphSizeX * (high.Value - MinValue) / MaxValue);
 
                 Rect.DrawLine(renderer, x, y1, x, y2, 0xdddddd);
             }
-        }
-
-        private int GetMiddleY()
-        {
-            long middleY = VgmState.PcmSamples[0];
-            for (int i = 1; i < VgmState.PcmSamples.Length; i++)
-            {
-                middleY += VgmState.PcmSamples[i];
-            }
-
-            middleY /= VgmState.PcmSamples.Length;
-
-            return (int)middleY;
         }
     }
 }
