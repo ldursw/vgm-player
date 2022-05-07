@@ -24,7 +24,7 @@ namespace VgmPlayer.Gui.Elements
                     continue;
                 }
 
-                var y = Y + (16 * (i / 16));
+                var y = Y + (16 * (i / 16)) - 32;
                 var x = X + (i % 16 * 32);
                 var color = (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb);
 
@@ -38,7 +38,7 @@ namespace VgmPlayer.Gui.Elements
                     continue;
                 }
 
-                var y = Y + (16 * (i / 16));
+                var y = Y + (16 * (i / 16)) - 48 + 16;
                 var x = X + (i % 16 * 32);
                 var color = (uint)(i % 2 == 0 ? 0xffffff : 0xbbbbbb);
 
