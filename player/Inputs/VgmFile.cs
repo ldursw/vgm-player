@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -17,25 +18,35 @@ namespace VgmPlayer.Inputs
 
         public VgmFile(string filename)
         {
-            _stream = new FileStream(filename, FileMode.Open);
-            _binaryReader = new BinaryReader(_stream);
+            _stream = new MemoryStream();
 
-            var header = _binaryReader.ReadUInt32();
-            _stream.Seek(0, SeekOrigin.Begin);
-
-            if (header != 0x206d6756)
+            using (var fs = File.OpenRead(filename))
             {
-                var ms = new MemoryStream();
-                using (var gz = new GZipStream(_stream, CompressionMode.Decompress))
-                {
-                    gz.CopyTo(ms);
-                    ms.Position = 0;
-                }
+                Span<byte> buf = stackalloc byte[4];
+                fs.Read(buf);
+                fs.Position = 0;
 
-                _stream.Dispose();
-                _stream = ms;
-                _binaryReader = new BinaryReader(ms);
+                Span<byte> magicBytes = stackalloc byte[4]
+                {
+                    (byte)'V',
+                    (byte)'g',
+                    (byte)'m',
+                    (byte)' '
+                };
+                if (magicBytes.SequenceCompareTo(buf) != 0)
+                {
+                    using var gz = new GZipStream(fs, CompressionMode.Decompress);
+                    CopyStream(gz, _stream);
+                }
+                else
+                {
+                    _stream.SetLength(fs.Length);
+                    CopyStream(fs, _stream);
+                }
             }
+
+            _stream.Position = 0;
+            _binaryReader = new BinaryReader(_stream);
 
             Header = new VgmHeader(_binaryReader);
             Data = new VgmData(Header, _binaryReader);
@@ -43,8 +54,18 @@ namespace VgmPlayer.Inputs
 
         public void Dispose()
         {
-            _stream.Dispose();
             _binaryReader.Dispose();
+            _stream.Dispose();
+        }
+
+        private void CopyStream(Stream source, Stream destination)
+        {
+            int read;
+            Span<byte> buf = stackalloc byte[0x100];
+            while ((read = source.Read(buf)) > 0)
+            {
+                destination.Write(buf.Slice(0, read));
+            }
         }
     }
 }
