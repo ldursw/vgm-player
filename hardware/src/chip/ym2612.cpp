@@ -36,8 +36,8 @@ void Ym2612::pushData(uint8_t port, uint8_t data)
 
     ShiftRegister::pushData(data);
 
-    // TODO: check ready flag instead of waiting 1.056 microseconds
+    // TODO: check ready flag instead of waiting
     digitalWriteFast(FM_WR, LOW);
-    asm("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n");
+    delayMicroseconds(2);
     digitalWriteFast(FM_WR, HIGH);
 }
