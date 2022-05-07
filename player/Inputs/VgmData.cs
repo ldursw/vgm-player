@@ -96,7 +96,7 @@ namespace VgmPlayer.Inputs
                     0x62 => WaitSample(0x2df),
                     0x63 => WaitSample(0x372),
                     _ when value >= 0x70 && value <= 0x7f =>
-                        WaitSample((ushort)(value - 0x70)),
+                        WaitSample((ushort)(value - 0x70 + 1)),
                     _ when value >= 0x80 && value <= 0x8f =>
                         FmWriteWait((byte)(value - 0x80)),
                     0x67 => SetDataBank(),
