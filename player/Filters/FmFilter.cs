@@ -21,8 +21,23 @@ namespace VgmPlayer.Filters
             }
         }
 
+        private struct FmFrequency
+        {
+            public byte? Low;
+            public byte? High;
+            public bool HighSame;
+
+            public void Reset()
+            {
+                Low = null;
+                High = null;
+                HighSame = false;
+            }
+        }
+
         private static readonly byte?[] _fmMap = new byte?[0x200];
         private static readonly FmChannel[] _fmKeys = new FmChannel[6];
+        private static readonly FmFrequency[] _fmFreq = new FmFrequency[9];
 
         public static Span<VgmInstruction> FilterCommand(VgmInstruction instr,
             Span<VgmInstruction> buffer)
@@ -31,9 +46,15 @@ namespace VgmPlayer.Filters
                 instr.Type == InstructionType.ResetImmediate)
             {
                 Array.Fill(_fmMap, null);
+
                 for (var i = 0; i < _fmKeys.Length; i++)
                 {
                     _fmKeys[i].Reset();
+                }
+
+                for (var i = 0; i < _fmFreq.Length; i++)
+                {
+                    _fmFreq[i].Reset();
                 }
 
                 return Span<VgmInstruction>.Empty;
@@ -64,6 +85,12 @@ namespace VgmPlayer.Filters
                 if (!ProcessKeyCommand(port, address, value))
                 {
                     return Span<VgmInstruction>.Empty;
+                }
+
+                if (ProcessFrequencyCommand(port, address, value,
+                        buffer, out var length))
+                {
+                    return buffer[0..length];
                 }
 
                 if (port == 0 && address == 0x27)
@@ -222,6 +249,133 @@ namespace VgmPlayer.Filters
             ch.Operator4 = op4;
 
             return allowCommand;
+        }
+
+        private static bool ProcessFrequencyCommand(byte port, byte address,
+            byte value, Span<VgmInstruction> buffer, out int length)
+        {
+            length = 0;
+
+            int channel;
+            byte highAddr;
+            switch (address)
+            {
+                case 0xa0:
+                    // channel 1/4, low
+                    channel = port == 0 ? 0 : 3;
+                    highAddr = 0xa4;
+                    break;
+                case 0xa1:
+                    // channel 2/5, low
+                    channel = port == 0 ? 1 : 4;
+                    highAddr = 0xa5;
+                    break;
+                case 0xa2:
+                    // channel 3/6, low
+                    // also operator S4
+                    channel = port == 0 ? 2 : 5;
+                    highAddr = 0xa6;
+                    break;
+                case 0xa4:
+                    // channel 1/4, high
+                    channel = port == 0 ? 0 : 3;
+                    highAddr = 0;
+                    break;
+                case 0xa5:
+                    // channel 2/5, high
+                    channel = port == 0 ? 1 : 4;
+                    highAddr = 0;
+                    break;
+                case 0xa6:
+                    // channel 3/6, high
+                    // also operator S4
+                    channel = port == 0 ? 2 : 5;
+                    highAddr = 0;
+                    break;
+                case 0xa8:
+                    // operator S3, low
+                    channel = 6;
+                    highAddr = 0xac;
+                    break;
+                case 0xa9:
+                    // operator S1, low
+                    channel = 8;
+                    highAddr = 0xad;
+                    break;
+                case 0xaa:
+                    // operator S2, low
+                    channel = 7;
+                    highAddr = 0xae;
+                    break;
+                case 0xac:
+                    // operator S3, high
+                    channel = 6;
+                    highAddr = 0;
+                    break;
+                case 0xad:
+                    // operator S1, high
+                    channel = 8;
+                    highAddr = 0;
+                    break;
+                case 0xae:
+                    // operator S2, high
+                    channel = 7;
+                    highAddr = 0;
+                    break;
+                default:
+                    return false;
+            }
+
+            var isLowByte = highAddr != 0;
+            ref var freq = ref _fmFreq[channel];
+
+            if (isLowByte)
+            {
+                bool sendData;
+                if (freq.HighSame)
+                {
+                    // high byte was supressed
+                    freq.HighSame = false;
+
+                    if (freq.Low != null && freq.Low == value)
+                    {
+                        // same high and low bytes, supress command
+                        sendData = false;
+                    }
+                    else
+                    {
+                        sendData = true;
+                    }
+                }
+                else
+                {
+                    // high byte was sent, must send low byte
+                    sendData = true;
+                }
+
+                if (sendData)
+                {
+                    if (freq.High != null)
+                    {
+                        buffer[length++] = VgmInstruction.FmWrite(
+                            port,
+                            highAddr,
+                            freq.High.Value
+                        );
+                    }
+
+                    buffer[length++] = VgmInstruction.FmWrite(port, address, value);
+                }
+
+                freq.Low = value;
+            }
+            else
+            {
+                freq.HighSame = freq.High != null && freq.High == value;
+                freq.High = value;
+            }
+
+            return true;
         }
     }
 }
