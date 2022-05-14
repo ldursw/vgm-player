@@ -56,7 +56,7 @@ namespace VgmPlayer.Inputs
 
         private void ReadPipeWindows()
         {
-            byte[] buffer = new byte[3];
+            Span<byte> buffer = stackalloc byte[3];
 
             while (true)
             {
@@ -67,7 +67,7 @@ namespace VgmPlayer.Inputs
 
                 while (true)
                 {
-                    if (server.Read(buffer, 0, 3) != 3)
+                    if (server.Read(buffer) != 3)
                     {
                         break;
                     }
