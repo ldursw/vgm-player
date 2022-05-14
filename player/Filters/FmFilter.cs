@@ -5,7 +5,24 @@ namespace VgmPlayer.Filters
 {
     class FmFilter
     {
+        private struct FmChannel
+        {
+            public bool? Operator1;
+            public bool? Operator2;
+            public bool? Operator3;
+            public bool? Operator4;
+
+            public void Reset()
+            {
+                Operator1 = null;
+                Operator2 = null;
+                Operator3 = null;
+                Operator4 = null;
+            }
+        }
+
         private static readonly byte?[] _fmMap = new byte?[0x200];
+        private static readonly FmChannel[] _fmKeys = new FmChannel[6];
 
         public static Span<VgmInstruction> FilterCommand(VgmInstruction instr,
             Span<VgmInstruction> buffer)
@@ -14,6 +31,10 @@ namespace VgmPlayer.Filters
                 instr.Type == InstructionType.ResetImmediate)
             {
                 Array.Fill(_fmMap, null);
+                for (var i = 0; i < _fmKeys.Length; i++)
+                {
+                    _fmKeys[i].Reset();
+                }
 
                 return Span<VgmInstruction>.Empty;
             }
@@ -40,6 +61,11 @@ namespace VgmPlayer.Filters
                     return Span<VgmInstruction>.Empty;
                 }
 
+                if (!ProcessKeyCommand(port, address, value))
+                {
+                    return Span<VgmInstruction>.Empty;
+                }
+
                 if (port == 0 && address == 0x27)
                 {
                     // filter timer data because they
@@ -55,8 +81,6 @@ namespace VgmPlayer.Filters
                 if (_fmMap[(port << 8) | address] == value)
                 {
                     var allowDuplicate =
-                        // key on-off
-                        (port == 0 && address == 0x28) ||
                         // frequency
                         (address == 0xa0 || address == 0xa1 || address == 0xa2) ||
                         (address == 0xa4 || address == 0xa5 || address == 0xa6) ||
@@ -153,6 +177,51 @@ namespace VgmPlayer.Filters
                 (address >= 0xb0 && address <= 0xb2) ||
                 // panning, PMS, AMS
                 (address >= 0xb4 && address <= 0xb6);
+        }
+
+        private static bool ProcessKeyCommand(byte port, byte address, byte value)
+        {
+            if (port != 0 || address != 0x28)
+            {
+                return true;
+            }
+
+            var channel = (value & 0b00000111) switch
+            {
+                0b000 => 0,
+                0b001 => 1,
+                0b010 => 2,
+                0b100 => 3,
+                0b101 => 4,
+                0b110 => 5,
+                _ => -1,
+            };
+            if (channel == -1)
+            {
+                return false;
+            }
+
+            var op1 = (value & 0b00010000) != 0;
+            var op2 = (value & 0b00100000) != 0;
+            var op3 = (value & 0b01000000) != 0;
+            var op4 = (value & 0b10000000) != 0;
+
+            ref var ch = ref _fmKeys[channel];
+
+            // If the key is pressed we allow the command to be repeated,
+            // otherwise we filter the off commands on already off operators.
+            var allowCommand =
+                ch.Operator1 == null || (ch.Operator1.Value | op1) ||
+                ch.Operator2 == null || (ch.Operator2.Value | op2) ||
+                ch.Operator3 == null || (ch.Operator3.Value | op3) ||
+                ch.Operator4 == null || (ch.Operator4.Value | op4);
+
+            ch.Operator1 = op1;
+            ch.Operator2 = op2;
+            ch.Operator3 = op3;
+            ch.Operator4 = op4;
+
+            return allowCommand;
         }
     }
 }
