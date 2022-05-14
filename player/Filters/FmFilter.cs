@@ -40,6 +40,18 @@ namespace VgmPlayer.Filters
                     return Span<VgmInstruction>.Empty;
                 }
 
+                if (port == 0 && address == 0x27)
+                {
+                    // filter timer data because they
+                    // are not used on the genesis.
+                    value &= 0b11000000;
+                    if (value == 0b10000000 || value == 0b11000000)
+                    {
+                        // illegal value
+                        return Span<VgmInstruction>.Empty;
+                    }
+                }
+
                 if (_fmMap[(port << 8) | address] == value)
                 {
                     var allowDuplicate =
@@ -106,10 +118,10 @@ namespace VgmPlayer.Filters
                     // low frequency oscillator
                     address == 0x22 ||
                     // timer A frequency
-                    address == 0x24 ||
-                    address == 0x25 ||
+                    // address == 0x24 ||
+                    // address == 0x25 ||
                     // timer B frequency
-                    address == 0x26 ||
+                    // address == 0x26 ||
                     // channel 3 mode and timer control
                     address == 0x27 ||
                     // key-on and key-off
