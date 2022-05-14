@@ -1,18 +1,21 @@
 using System;
 using VgmPlayer.Structs;
 
-namespace VgmPlayer.Outputs
+namespace VgmPlayer.Filters
 {
     class FmFilter
     {
         private static readonly byte?[] _fmMap = new byte?[0x200];
 
-        public static VgmInstruction FilterCommand(VgmInstruction instr)
+        public static Span<VgmInstruction> FilterCommand(VgmInstruction instr,
+            Span<VgmInstruction> buffer)
         {
             if (instr.Type == InstructionType.End ||
                 instr.Type == InstructionType.ResetImmediate)
             {
                 Array.Fill(_fmMap, null);
+
+                return Span<VgmInstruction>.Empty;
             }
             else if (instr.Type == InstructionType.FmWrite0 ||
                 instr.Type == InstructionType.FmWrite1 ||
@@ -34,7 +37,7 @@ namespace VgmPlayer.Outputs
 
                 if (!IsValidFmRegister(port, address))
                 {
-                    return VgmInstruction.Nop();
+                    return Span<VgmInstruction>.Empty;
                 }
 
                 if (_fmMap[(port << 8) | address] == value)
@@ -53,19 +56,34 @@ namespace VgmPlayer.Outputs
                     {
                         if (instr.Type == InstructionType.FmSample)
                         {
-                            return VgmInstruction.WaitSample(instr.Data2);
+                            buffer[0] = VgmInstruction.WaitSample(instr.Data2);
+
+                            return buffer[0..1];
                         }
                         else
                         {
-                            return VgmInstruction.Nop();
+                            return Span<VgmInstruction>.Empty;
                         }
                     }
                 }
 
                 _fmMap[(port << 8) | address] = value;
+
+                if (instr.Type == InstructionType.FmSample)
+                {
+                    buffer[0] = VgmInstruction.FmWriteSample(instr.Data1, instr.Data2);
+                }
+                else
+                {
+                    buffer[0] = VgmInstruction.FmWrite(port, address, value);
+                }
+
+                return buffer[0..1];
             }
-            
-            return instr;
+            else
+            {
+                return Span<VgmInstruction>.Empty;
+            }
         }
 
         public static bool IsValidFmRegister(byte port, byte address)

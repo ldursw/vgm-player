@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
+using VgmPlayer.Filters;
 using VgmPlayer.Gui;
 using VgmPlayer.Inputs;
 using VgmPlayer.Structs;
@@ -32,9 +33,24 @@ namespace VgmPlayer.Outputs
 
             WriteCommand(VgmInstruction.ResetImmediate());
 
+            Span<VgmInstruction> buf = stackalloc VgmInstruction[16];
+
             foreach (var inst in vgm.Instructions)
             {
-                WriteCommand(inst);
+                foreach (var wait in WaitFilter.FilterCommand(inst, buf))
+                {
+                    WriteCommand(wait);
+                }
+
+                foreach (var psg in PsgFilter.FilterCommand(inst, buf))
+                {
+                    WriteCommand(psg);
+                }
+
+                foreach (var fm in FmFilter.FilterCommand(inst, buf))
+                {
+                    WriteCommand(fm);
+                }
             }
 
             WriteCommand(VgmInstruction.End());
@@ -58,17 +74,16 @@ namespace VgmPlayer.Outputs
 
         private static void WriteCommand(VgmInstruction instruction)
         {
-            var toSend = FmFilter.FilterCommand(instruction);
-            if (toSend.Type == InstructionType.Nop)
+            if (instruction.Type == InstructionType.Nop)
             {
                 return;
             }
 
-            VgmState.Commands.Enqueue(toSend);
+            VgmState.Commands.Enqueue(instruction);
 
             if (_serial != null)
             {
-                SendData(_serial, toSend);
+                SendData(_serial, instruction);
             }
         }
 
