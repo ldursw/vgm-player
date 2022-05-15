@@ -24,7 +24,7 @@ namespace VgmPlayer.Inputs
             var pipeFunc = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
                 (Action)ReadPipeWindows : ReadPipeLinux;
 
-            _queue = new CircularBuffer<VgmInstruction>(InstructionsPerFrame);
+            _queue = new CircularBuffer<VgmInstruction>(InstructionsPerFrame * 2);
             _readThread = new Thread(() => pipeFunc()) { IsBackground = true };
             _readThread.Start();
         }
